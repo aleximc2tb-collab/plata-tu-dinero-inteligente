@@ -18,6 +18,7 @@ export const Route = createFileRoute("/presupuesto")({
 function Presupuesto() {
   const { wallets, budgets, transactions, refresh } = useFinance();
   const [open, setOpen] = useState(false);
+  const [moveOpen, setMoveOpen] = useState(false);
   const [period, setPeriod] = useState<"semanal"|"quincenal"|"mensual">("mensual");
 
   // Disponible para asignar = patrimonio - total asignado
