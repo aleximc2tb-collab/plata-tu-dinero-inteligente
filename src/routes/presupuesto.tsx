@@ -6,7 +6,8 @@ import { EmptyState } from "@/components/EmptyState";
 import { RequireAuth } from "@/components/RequireAuth";
 import { useFinance } from "@/hooks/useFinance";
 import { NewBudgetSheet } from "@/components/NewBudgetSheet";
-import { Trash2 } from "lucide-react";
+import { MoveBudgetSheet } from "@/components/MoveBudgetSheet";
+import { Trash2, ArrowLeftRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/presupuesto")({
@@ -17,6 +18,7 @@ export const Route = createFileRoute("/presupuesto")({
 function Presupuesto() {
   const { wallets, budgets, transactions, refresh } = useFinance();
   const [open, setOpen] = useState(false);
+  const [moveOpen, setMoveOpen] = useState(false);
   const [period, setPeriod] = useState<"semanal"|"quincenal"|"mensual">("mensual");
 
   // Disponible para asignar = patrimonio - total asignado
@@ -94,12 +96,19 @@ function Presupuesto() {
           </div>
         )}
 
-        <button onClick={() => setOpen(true)} className="tap mt-6 w-full h-14 rounded-2xl bg-primary text-primary-foreground font-semibold shadow-glow">
-          Asignar dinero
-        </button>
+        <div className="mt-6 grid grid-cols-2 gap-3">
+          <button onClick={() => setOpen(true)} className="tap h-14 rounded-2xl bg-primary text-primary-foreground font-semibold shadow-glow">
+            Asignar dinero
+          </button>
+          <button onClick={() => setMoveOpen(true)} disabled={budgets.length < 1}
+            className="tap h-14 rounded-2xl border-2 border-primary text-primary font-semibold flex items-center justify-center gap-2 disabled:opacity-50">
+            <ArrowLeftRight className="h-4 w-4" /> Mover plata
+          </button>
+        </div>
       </section>
 
       <NewBudgetSheet open={open} onClose={() => setOpen(false)} onCreated={refresh} />
+      <MoveBudgetSheet open={moveOpen} onClose={() => setMoveOpen(false)} budgets={budgets} disponible={disponible} onDone={refresh} />
     </AppShell>
   );
 }

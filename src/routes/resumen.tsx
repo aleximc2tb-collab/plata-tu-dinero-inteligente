@@ -21,6 +21,24 @@ function Resumen() {
   const ingresos = monthTx.filter((t) => t.type === "ingreso").reduce((s, t) => s + t.amount, 0);
   const gastos = monthTx.filter((t) => t.type === "gasto").reduce((s, t) => s + t.amount, 0);
   const days = daysUntilMonthEnd();
+  const ahorro = ingresos - gastos;
+  const ratio = ingresos > 0 ? gastos / ingresos : 0;
+  const dailyBudget = total > 0 && days > 0 ? total / Math.max(days, 1) : 0;
+
+  // Top categoría del mes
+  const byCat = monthTx.filter((t) => t.type === "gasto").reduce<Record<string, { total: number; emoji: string }>>((acc, t) => {
+    acc[t.category] = acc[t.category] || { total: 0, emoji: t.category_emoji };
+    acc[t.category].total += t.amount;
+    return acc;
+  }, {});
+  const topCat = Object.entries(byCat).sort((a, b) => b[1].total - a[1].total)[0];
+
+  let tip = "Asigná cada peso antes de gastarlo y vas a llegar a fin de mes con plata.";
+  if (gastos === 0 && ingresos === 0) tip = "Empezá registrando tu primer ingreso o gasto del mes.";
+  else if (ratio > 1) tip = "Estás gastando más de lo que ingresás. Revisá tus categorías.";
+  else if (ratio > 0.8) tip = "Vas al 80% de tus ingresos. Cuidado con los próximos gastos.";
+  else if (ahorro > 0 && ingresos > 0) tip = `¡Buen mes! Llevás ahorrado ${Math.round((ahorro/ingresos)*100)}% de tus ingresos.`;
+  else if (topCat) tip = `Tu mayor gasto es ${topCat[1].emoji} ${topCat[0]}. ¿Lo tenés presupuestado?`;
 
   return (
     <AppShell>
@@ -36,6 +54,7 @@ function Resumen() {
           <div className="mt-2"><Money value={total} animate className="text-5xl font-black" /></div>
           <p className="mt-3 text-xs text-muted-foreground">
             Te quedan <span className="text-primary font-semibold">{days} días</span> para fin de mes
+            {dailyBudget > 0 && <> · ritmo diario <Money value={dailyBudget} className="text-primary" /></>}
           </p>
         </div>
 
@@ -52,7 +71,7 @@ function Resumen() {
 
         <div className="mt-4 glass rounded-2xl p-5">
           <p className="text-sm leading-relaxed">
-            <span className="text-primary font-semibold">💡 Tip:</span> Asigná cada peso antes de gastarlo y vas a llegar a fin de mes con plata.
+            <span className="text-primary font-semibold">💡 Tip:</span> {tip}
           </p>
         </div>
 
