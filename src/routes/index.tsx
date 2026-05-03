@@ -1,5 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/")({ component: Splash });
 
@@ -8,11 +9,13 @@ function Splash() {
   const [leaving, setLeaving] = useState(false);
 
   useEffect(() => {
-    const seen = typeof window !== "undefined" && localStorage.getItem("plata.onboarded");
-    const t = setTimeout(() => setLeaving(true), 1400);
-    const t2 = setTimeout(() => {
-      navigate({ to: seen ? "/resumen" : "/onboarding" });
-    }, 1900);
+    const t = setTimeout(() => setLeaving(true), 1200);
+    const t2 = setTimeout(async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) return navigate({ to: "/resumen" });
+      const seen = localStorage.getItem("plata.onboarded");
+      navigate({ to: seen ? "/auth" : "/onboarding" });
+    }, 1700);
     return () => { clearTimeout(t); clearTimeout(t2); };
   }, [navigate]);
 
