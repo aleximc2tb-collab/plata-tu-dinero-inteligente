@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ResumenRouteImport } from './routes/resumen'
+import { Route as RecurrentesRouteImport } from './routes/recurrentes'
 import { Route as PresupuestoRouteImport } from './routes/presupuesto'
 import { Route as PerfilRouteImport } from './routes/perfil'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
@@ -22,6 +23,11 @@ import { Route as IndexRouteImport } from './routes/index'
 const ResumenRoute = ResumenRouteImport.update({
   id: '/resumen',
   path: '/resumen',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RecurrentesRoute = RecurrentesRouteImport.update({
+  id: '/recurrentes',
+  path: '/recurrentes',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PresupuestoRoute = PresupuestoRouteImport.update({
@@ -74,6 +80,7 @@ export interface FileRoutesByFullPath {
   '/onboarding': typeof OnboardingRoute
   '/perfil': typeof PerfilRoute
   '/presupuesto': typeof PresupuestoRoute
+  '/recurrentes': typeof RecurrentesRoute
   '/resumen': typeof ResumenRoute
 }
 export interface FileRoutesByTo {
@@ -85,6 +92,7 @@ export interface FileRoutesByTo {
   '/onboarding': typeof OnboardingRoute
   '/perfil': typeof PerfilRoute
   '/presupuesto': typeof PresupuestoRoute
+  '/recurrentes': typeof RecurrentesRoute
   '/resumen': typeof ResumenRoute
 }
 export interface FileRoutesById {
@@ -97,6 +105,7 @@ export interface FileRoutesById {
   '/onboarding': typeof OnboardingRoute
   '/perfil': typeof PerfilRoute
   '/presupuesto': typeof PresupuestoRoute
+  '/recurrentes': typeof RecurrentesRoute
   '/resumen': typeof ResumenRoute
 }
 export interface FileRouteTypes {
@@ -110,6 +119,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/perfil'
     | '/presupuesto'
+    | '/recurrentes'
     | '/resumen'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -121,6 +131,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/perfil'
     | '/presupuesto'
+    | '/recurrentes'
     | '/resumen'
   id:
     | '__root__'
@@ -132,6 +143,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/perfil'
     | '/presupuesto'
+    | '/recurrentes'
     | '/resumen'
   fileRoutesById: FileRoutesById
 }
@@ -144,6 +156,7 @@ export interface RootRouteChildren {
   OnboardingRoute: typeof OnboardingRoute
   PerfilRoute: typeof PerfilRoute
   PresupuestoRoute: typeof PresupuestoRoute
+  RecurrentesRoute: typeof RecurrentesRoute
   ResumenRoute: typeof ResumenRoute
 }
 
@@ -154,6 +167,13 @@ declare module '@tanstack/react-router' {
       path: '/resumen'
       fullPath: '/resumen'
       preLoaderRoute: typeof ResumenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/recurrentes': {
+      id: '/recurrentes'
+      path: '/recurrentes'
+      fullPath: '/recurrentes'
+      preLoaderRoute: typeof RecurrentesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/presupuesto': {
@@ -224,6 +244,7 @@ const rootRouteChildren: RootRouteChildren = {
   OnboardingRoute: OnboardingRoute,
   PerfilRoute: PerfilRoute,
   PresupuestoRoute: PresupuestoRoute,
+  RecurrentesRoute: RecurrentesRoute,
   ResumenRoute: ResumenRoute,
 }
 export const routeTree = rootRouteImport

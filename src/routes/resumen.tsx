@@ -1,10 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useEffect } from "react";
 import { AppShell } from "@/components/AppShell";
 import { Money } from "@/components/Money";
 import { EmptyState } from "@/components/EmptyState";
 import { RequireAuth } from "@/components/RequireAuth";
 import { greeting, daysUntilMonthEnd } from "@/lib/format";
 import { useFinance } from "@/hooks/useFinance";
+import { useAuth } from "@/hooks/useAuth";
+import { processDueRecurring } from "@/hooks/useRecurring";
 import { ArrowDownRight, ArrowUpRight, TrendingUp, Sparkles } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 
@@ -14,7 +17,13 @@ export const Route = createFileRoute("/resumen")({
 });
 
 function Resumen() {
-  const { wallets, transactions } = useFinance();
+  const { user } = useAuth();
+  const { wallets, transactions, refresh } = useFinance();
+
+  useEffect(() => {
+    if (!user) return;
+    processDueRecurring(user.id).then((n) => { if (n > 0) refresh(); });
+  }, [user, refresh]);
   const total = wallets.reduce((s, w) => s + (w.balance ?? 0), 0);
   const month = new Date().getMonth();
   const monthTx = transactions.filter((t) => new Date(t.occurred_at).getMonth() === month);
