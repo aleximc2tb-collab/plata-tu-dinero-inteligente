@@ -14,6 +14,7 @@ import { Route as PresupuestoRouteImport } from './routes/presupuesto'
 import { Route as PerfilRouteImport } from './routes/perfil'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as BilleterasRouteImport } from './routes/billeteras'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AjustesRouteImport } from './routes/ajustes'
 import { Route as ActividadRouteImport } from './routes/actividad'
 import { Route as IndexRouteImport } from './routes/index'
@@ -43,6 +44,11 @@ const BilleterasRoute = BilleterasRouteImport.update({
   path: '/billeteras',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AjustesRoute = AjustesRouteImport.update({
   id: '/ajustes',
   path: '/ajustes',
@@ -63,6 +69,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/actividad': typeof ActividadRoute
   '/ajustes': typeof AjustesRoute
+  '/auth': typeof AuthRoute
   '/billeteras': typeof BilleterasRoute
   '/onboarding': typeof OnboardingRoute
   '/perfil': typeof PerfilRoute
@@ -73,6 +80,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/actividad': typeof ActividadRoute
   '/ajustes': typeof AjustesRoute
+  '/auth': typeof AuthRoute
   '/billeteras': typeof BilleterasRoute
   '/onboarding': typeof OnboardingRoute
   '/perfil': typeof PerfilRoute
@@ -84,6 +92,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/actividad': typeof ActividadRoute
   '/ajustes': typeof AjustesRoute
+  '/auth': typeof AuthRoute
   '/billeteras': typeof BilleterasRoute
   '/onboarding': typeof OnboardingRoute
   '/perfil': typeof PerfilRoute
@@ -96,6 +105,7 @@ export interface FileRouteTypes {
     | '/'
     | '/actividad'
     | '/ajustes'
+    | '/auth'
     | '/billeteras'
     | '/onboarding'
     | '/perfil'
@@ -106,6 +116,7 @@ export interface FileRouteTypes {
     | '/'
     | '/actividad'
     | '/ajustes'
+    | '/auth'
     | '/billeteras'
     | '/onboarding'
     | '/perfil'
@@ -116,6 +127,7 @@ export interface FileRouteTypes {
     | '/'
     | '/actividad'
     | '/ajustes'
+    | '/auth'
     | '/billeteras'
     | '/onboarding'
     | '/perfil'
@@ -127,6 +139,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ActividadRoute: typeof ActividadRoute
   AjustesRoute: typeof AjustesRoute
+  AuthRoute: typeof AuthRoute
   BilleterasRoute: typeof BilleterasRoute
   OnboardingRoute: typeof OnboardingRoute
   PerfilRoute: typeof PerfilRoute
@@ -171,6 +184,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BilleterasRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/ajustes': {
       id: '/ajustes'
       path: '/ajustes'
@@ -199,6 +219,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ActividadRoute: ActividadRoute,
   AjustesRoute: AjustesRoute,
+  AuthRoute: AuthRoute,
   BilleterasRoute: BilleterasRoute,
   OnboardingRoute: OnboardingRoute,
   PerfilRoute: PerfilRoute,
@@ -208,3 +229,12 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}
