@@ -40,12 +40,10 @@ export function MoveBudgetSheet({ open, onClose, budgets, disponible, onDone }: 
     }
 
     setBusy(true);
-    const ops: Promise<unknown>[] = [];
     if (fromBudget) {
-      ops.push(supabase.from("budget_categories").update({ assigned: fromBudget.assigned - amt }).eq("id", fromBudget.id));
+      await supabase.from("budget_categories").update({ assigned: fromBudget.assigned - amt }).eq("id", fromBudget.id);
     }
-    ops.push(supabase.from("budget_categories").update({ assigned: toBudget.assigned + amt }).eq("id", toBudget.id));
-    await Promise.all(ops);
+    await supabase.from("budget_categories").update({ assigned: toBudget.assigned + amt }).eq("id", toBudget.id);
     setBusy(false);
     setAmount("");
     onDone();
