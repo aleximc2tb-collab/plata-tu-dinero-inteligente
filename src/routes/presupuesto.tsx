@@ -6,7 +6,8 @@ import { EmptyState } from "@/components/EmptyState";
 import { RequireAuth } from "@/components/RequireAuth";
 import { useFinance } from "@/hooks/useFinance";
 import { NewBudgetSheet } from "@/components/NewBudgetSheet";
-import { Trash2 } from "lucide-react";
+import { MoveBudgetSheet } from "@/components/MoveBudgetSheet";
+import { Trash2, ArrowLeftRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/presupuesto")({
