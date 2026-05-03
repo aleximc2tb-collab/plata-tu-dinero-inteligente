@@ -71,6 +71,63 @@ export type Database = {
         }
         Relationships: []
       }
+      recurring_transactions: {
+        Row: {
+          active: boolean
+          amount: number
+          category: string
+          category_emoji: string
+          created_at: string
+          end_date: string | null
+          frequency: Database["public"]["Enums"]["recurrence_frequency"]
+          id: string
+          installments_paid: number
+          installments_total: number | null
+          next_run: string
+          notes: string | null
+          type: Database["public"]["Enums"]["tx_type"]
+          updated_at: string
+          user_id: string
+          wallet_id: string
+        }
+        Insert: {
+          active?: boolean
+          amount: number
+          category: string
+          category_emoji?: string
+          created_at?: string
+          end_date?: string | null
+          frequency?: Database["public"]["Enums"]["recurrence_frequency"]
+          id?: string
+          installments_paid?: number
+          installments_total?: number | null
+          next_run: string
+          notes?: string | null
+          type: Database["public"]["Enums"]["tx_type"]
+          updated_at?: string
+          user_id: string
+          wallet_id: string
+        }
+        Update: {
+          active?: boolean
+          amount?: number
+          category?: string
+          category_emoji?: string
+          created_at?: string
+          end_date?: string | null
+          frequency?: Database["public"]["Enums"]["recurrence_frequency"]
+          id?: string
+          installments_paid?: number
+          installments_total?: number | null
+          next_run?: string
+          notes?: string | null
+          type?: Database["public"]["Enums"]["tx_type"]
+          updated_at?: string
+          user_id?: string
+          wallet_id?: string
+        }
+        Relationships: []
+      }
       transactions: {
         Row: {
           amount: number
@@ -81,6 +138,7 @@ export type Database = {
           id: string
           notes: string | null
           occurred_at: string
+          recurring_id: string | null
           type: Database["public"]["Enums"]["tx_type"]
           user_id: string
           wallet_id: string
@@ -94,6 +152,7 @@ export type Database = {
           id?: string
           notes?: string | null
           occurred_at?: string
+          recurring_id?: string | null
           type: Database["public"]["Enums"]["tx_type"]
           user_id: string
           wallet_id: string
@@ -107,6 +166,7 @@ export type Database = {
           id?: string
           notes?: string | null
           occurred_at?: string
+          recurring_id?: string | null
           type?: Database["public"]["Enums"]["tx_type"]
           user_id?: string
           wallet_id?: string
@@ -166,6 +226,7 @@ export type Database = {
     }
     Enums: {
       budget_period: "semanal" | "quincenal" | "mensual"
+      recurrence_frequency: "diaria" | "semanal" | "quincenal" | "mensual"
       tx_type: "ingreso" | "gasto"
       wallet_type:
         | "efectivo"
@@ -302,6 +363,7 @@ export const Constants = {
   public: {
     Enums: {
       budget_period: ["semanal", "quincenal", "mensual"],
+      recurrence_frequency: ["diaria", "semanal", "quincenal", "mensual"],
       tx_type: ["ingreso", "gasto"],
       wallet_type: [
         "efectivo",
