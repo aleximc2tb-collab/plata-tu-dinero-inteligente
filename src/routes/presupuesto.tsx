@@ -96,12 +96,19 @@ function Presupuesto() {
           </div>
         )}
 
-        <button onClick={() => setOpen(true)} className="tap mt-6 w-full h-14 rounded-2xl bg-primary text-primary-foreground font-semibold shadow-glow">
-          Asignar dinero
-        </button>
+        <div className="mt-6 grid grid-cols-2 gap-3">
+          <button onClick={() => setOpen(true)} className="tap h-14 rounded-2xl bg-primary text-primary-foreground font-semibold shadow-glow">
+            Asignar dinero
+          </button>
+          <button onClick={() => setMoveOpen(true)} disabled={budgets.length < 1}
+            className="tap h-14 rounded-2xl border-2 border-primary text-primary font-semibold flex items-center justify-center gap-2 disabled:opacity-50">
+            <ArrowLeftRight className="h-4 w-4" /> Mover plata
+          </button>
+        </div>
       </section>
 
       <NewBudgetSheet open={open} onClose={() => setOpen(false)} onCreated={refresh} />
+      <MoveBudgetSheet open={moveOpen} onClose={() => setMoveOpen(false)} budgets={budgets} disponible={disponible} onDone={refresh} />
     </AppShell>
   );
 }
