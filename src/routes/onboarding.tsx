@@ -18,10 +18,11 @@ function Onboarding() {
   const next = () => {
     if (last) {
       localStorage.setItem("plata.onboarded", "1");
-      navigate({ to: "/resumen" });
+      navigate({ to: "/auth" });
     } else setI(i + 1);
   };
 
+  const skip = () => { localStorage.setItem("plata.onboarded","1"); navigate({ to: "/auth" }); };
   const s = steps[i];
 
   return (
@@ -32,25 +33,16 @@ function Onboarding() {
             <span key={idx} className={`h-1.5 rounded-full transition-all ${idx === i ? "w-8 bg-primary" : "w-4 bg-muted"}`} />
           ))}
         </div>
-        {!last && (
-          <button onClick={() => { localStorage.setItem("plata.onboarded","1"); navigate({ to: "/resumen" }); }} className="text-xs text-muted-foreground tap">
-            Saltar
-          </button>
-        )}
+        {!last && <button onClick={skip} className="text-xs text-muted-foreground tap">Saltar</button>}
       </div>
 
       <div key={i} className="flex-1 flex flex-col items-center justify-center text-center animate-fade-up">
-        <div className="h-32 w-32 rounded-[2rem] glass-gold grid place-items-center text-6xl shadow-glow mb-8">
-          {s.emoji}
-        </div>
+        <div className="h-32 w-32 rounded-[2rem] glass-gold grid place-items-center text-6xl shadow-glow mb-8">{s.emoji}</div>
         <h2 className="text-3xl font-black tracking-tight mb-3">{s.title}</h2>
         <p className="text-base text-muted-foreground max-w-xs">{s.desc}</p>
       </div>
 
-      <button
-        onClick={next}
-        className="tap w-full h-14 rounded-2xl bg-primary text-primary-foreground font-semibold flex items-center justify-center gap-2 shadow-glow"
-      >
+      <button onClick={next} className="tap w-full h-14 rounded-2xl bg-primary text-primary-foreground font-semibold flex items-center justify-center gap-2 shadow-glow">
         {last ? "Empezar" : "Siguiente"} <ArrowRight className="h-5 w-5" />
       </button>
     </div>
