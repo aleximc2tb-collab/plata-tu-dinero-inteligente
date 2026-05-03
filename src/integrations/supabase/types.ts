@@ -14,7 +14,149 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      budget_categories: {
+        Row: {
+          assigned: number
+          created_at: string
+          emoji: string
+          id: string
+          name: string
+          period: Database["public"]["Enums"]["budget_period"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          assigned?: number
+          created_at?: string
+          emoji?: string
+          id?: string
+          name: string
+          period?: Database["public"]["Enums"]["budget_period"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          assigned?: number
+          created_at?: string
+          emoji?: string
+          id?: string
+          name?: string
+          period?: Database["public"]["Enums"]["budget_period"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          display_name: string | null
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id: string
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      transactions: {
+        Row: {
+          amount: number
+          category: string
+          category_emoji: string
+          created_at: string
+          deleted_at: string | null
+          id: string
+          notes: string | null
+          occurred_at: string
+          type: Database["public"]["Enums"]["tx_type"]
+          user_id: string
+          wallet_id: string
+        }
+        Insert: {
+          amount: number
+          category: string
+          category_emoji?: string
+          created_at?: string
+          deleted_at?: string | null
+          id?: string
+          notes?: string | null
+          occurred_at?: string
+          type: Database["public"]["Enums"]["tx_type"]
+          user_id: string
+          wallet_id: string
+        }
+        Update: {
+          amount?: number
+          category?: string
+          category_emoji?: string
+          created_at?: string
+          deleted_at?: string | null
+          id?: string
+          notes?: string | null
+          occurred_at?: string
+          type?: Database["public"]["Enums"]["tx_type"]
+          user_id?: string
+          wallet_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "transactions_wallet_id_fkey"
+            columns: ["wallet_id"]
+            isOneToOne: false
+            referencedRelation: "wallets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      wallets: {
+        Row: {
+          closing_day: number | null
+          created_at: string
+          due_day: number | null
+          id: string
+          initial_balance: number
+          name: string
+          type: Database["public"]["Enums"]["wallet_type"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          closing_day?: number | null
+          created_at?: string
+          due_day?: number | null
+          id?: string
+          initial_balance?: number
+          name: string
+          type: Database["public"]["Enums"]["wallet_type"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          closing_day?: number | null
+          created_at?: string
+          due_day?: number | null
+          id?: string
+          initial_balance?: number
+          name?: string
+          type?: Database["public"]["Enums"]["wallet_type"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +165,15 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      budget_period: "semanal" | "quincenal" | "mensual"
+      tx_type: "ingreso" | "gasto"
+      wallet_type:
+        | "efectivo"
+        | "banco"
+        | "mercadopago"
+        | "uala"
+        | "naranja"
+        | "credito"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +300,17 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      budget_period: ["semanal", "quincenal", "mensual"],
+      tx_type: ["ingreso", "gasto"],
+      wallet_type: [
+        "efectivo",
+        "banco",
+        "mercadopago",
+        "uala",
+        "naranja",
+        "credito",
+      ],
+    },
   },
 } as const
