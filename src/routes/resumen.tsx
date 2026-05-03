@@ -54,6 +54,7 @@ function Resumen() {
           <div className="mt-2"><Money value={total} animate className="text-5xl font-black" /></div>
           <p className="mt-3 text-xs text-muted-foreground">
             Te quedan <span className="text-primary font-semibold">{days} días</span> para fin de mes
+            {dailyBudget > 0 && <> · ritmo diario <Money value={dailyBudget} className="text-primary" /></>}
           </p>
         </div>
 
@@ -70,7 +71,7 @@ function Resumen() {
 
         <div className="mt-4 glass rounded-2xl p-5">
           <p className="text-sm leading-relaxed">
-            <span className="text-primary font-semibold">💡 Tip:</span> Asigná cada peso antes de gastarlo y vas a llegar a fin de mes con plata.
+            <span className="text-primary font-semibold">💡 Tip:</span> {tip}
           </p>
         </div>
 
