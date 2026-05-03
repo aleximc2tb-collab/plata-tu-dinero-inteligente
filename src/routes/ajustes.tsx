@@ -1,10 +1,11 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { AppShell } from "@/components/AppShell";
-import { Bell, Lock, Palette, HelpCircle, ChevronRight } from "lucide-react";
+import { Bell, Lock, Palette, HelpCircle, ChevronRight, Repeat } from "lucide-react";
 
 export const Route = createFileRoute("/ajustes")({ component: Ajustes });
 
 const items = [
+  { icon: Repeat, label: "Recurrentes y cuotas", hint: "Sueldo, alquiler, suscripciones, cuotas", to: "/recurrentes" as const },
   { icon: Bell, label: "Notificaciones", hint: "Alertas de presupuesto y vencimientos" },
   { icon: Lock, label: "Seguridad", hint: "PIN, biometría y bloqueo automático" },
   { icon: Palette, label: "Apariencia", hint: "Tema oscuro / claro" },
