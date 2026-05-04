@@ -1,16 +1,20 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { AppShell } from "@/components/AppShell";
 import { Money } from "@/components/Money";
 import { EmptyState } from "@/components/EmptyState";
 import { RequireAuth } from "@/components/RequireAuth";
+import { ScanFab } from "@/components/ScanFab";
+import { ScanTicketSheet } from "@/components/ScanTicketSheet";
 import { greeting, daysUntilMonthEnd } from "@/lib/format";
 import { useFinance } from "@/hooks/useFinance";
 import { useCardAlerts } from "@/hooks/useCardAlerts";
 import { useAuth } from "@/hooks/useAuth";
 import { processDueRecurring } from "@/hooks/useRecurring";
-import { ArrowDownRight, ArrowUpRight, TrendingUp, Sparkles, AlertTriangle } from "lucide-react";
+import { ArrowDownRight, ArrowUpRight, TrendingUp, Sparkles, AlertTriangle, Zap, X } from "lucide-react";
 import { Link } from "@tanstack/react-router";
+
+const SCAN_HINT_KEY = "plata.scanHintSeen";
 
 export const Route = createFileRoute("/resumen")({
   head: () => ({ meta: [{ title: "Resumen — Plata" }, { name: "description", content: "Tu balance, ingresos y gastos del mes en un vistazo." }] }),
@@ -22,11 +26,34 @@ function Resumen() {
   const { wallets, transactions, refresh } = useFinance();
   const cardAlerts = useCardAlerts(wallets, transactions);
   const urgentCards = cardAlerts.filter((a) => a.level === "urgent" || a.level === "warn");
+  const [scanOpen, setScanOpen] = useState(false);
+  const [showHint, setShowHint] = useState(false);
 
   useEffect(() => {
     if (!user) return;
     processDueRecurring(user.id).then((n) => { if (n > 0) refresh(); });
   }, [user, refresh]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (!localStorage.getItem(SCAN_HINT_KEY)) {
+      const t = setTimeout(() => setShowHint(true), 800);
+      return () => clearTimeout(t);
+    }
+  }, []);
+
+  const dismissHint = () => {
+    setShowHint(false);
+    try { localStorage.setItem(SCAN_HINT_KEY, "1"); } catch { /* noop */ }
+  };
+
+  const openScan = () => {
+    dismissHint();
+    setScanOpen(true);
+    if (typeof navigator !== "undefined" && "vibrate" in navigator) {
+      try { navigator.vibrate?.(15); } catch { /* noop */ }
+    }
+  };
   const total = wallets.reduce((s, w) => s + (w.balance ?? 0), 0);
   const month = new Date().getMonth();
   const monthTx = transactions.filter((t) => new Date(t.occurred_at).getMonth() === month);
@@ -135,6 +162,31 @@ function Resumen() {
           </div>
         )}
       </section>
+
+      {showHint && (
+        <div className="fixed bottom-44 right-5 z-40 max-w-[260px] animate-fade-up">
+          <div className="relative rounded-2xl glass-gold p-3 pr-8 shadow-elegant border border-primary/30">
+            <button onClick={dismissHint} aria-label="Cerrar" className="tap absolute top-1.5 right-1.5 h-6 w-6 grid place-items-center rounded-full hover:bg-muted">
+              <X className="h-3.5 w-3.5 text-muted-foreground" />
+            </button>
+            <div className="flex items-start gap-2">
+              <Zap className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+              <p className="text-xs leading-snug">
+                <span className="font-semibold">Tip:</span> escaneá tickets o pegá links para cargar gastos más rápido ⚡
+              </p>
+            </div>
+            <div className="absolute -bottom-1.5 right-6 h-3 w-3 rotate-45 bg-gold-soft border-r border-b border-primary/30" />
+          </div>
+        </div>
+      )}
+
+      <ScanFab onClick={openScan} />
+      <ScanTicketSheet
+        open={scanOpen}
+        onClose={() => setScanOpen(false)}
+        wallets={wallets}
+        onCreated={refresh}
+      />
     </AppShell>
   );
 }
