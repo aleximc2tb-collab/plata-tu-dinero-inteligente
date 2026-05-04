@@ -14,6 +14,7 @@ import { Route as RecurrentesRouteImport } from './routes/recurrentes'
 import { Route as PresupuestoRouteImport } from './routes/presupuesto'
 import { Route as PerfilRouteImport } from './routes/perfil'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
+import { Route as MetasRouteImport } from './routes/metas'
 import { Route as BilleterasRouteImport } from './routes/billeteras'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AjustesRouteImport } from './routes/ajustes'
@@ -43,6 +44,11 @@ const PerfilRoute = PerfilRouteImport.update({
 const OnboardingRoute = OnboardingRouteImport.update({
   id: '/onboarding',
   path: '/onboarding',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MetasRoute = MetasRouteImport.update({
+  id: '/metas',
+  path: '/metas',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BilleterasRoute = BilleterasRouteImport.update({
@@ -77,6 +83,7 @@ export interface FileRoutesByFullPath {
   '/ajustes': typeof AjustesRoute
   '/auth': typeof AuthRoute
   '/billeteras': typeof BilleterasRoute
+  '/metas': typeof MetasRoute
   '/onboarding': typeof OnboardingRoute
   '/perfil': typeof PerfilRoute
   '/presupuesto': typeof PresupuestoRoute
@@ -89,6 +96,7 @@ export interface FileRoutesByTo {
   '/ajustes': typeof AjustesRoute
   '/auth': typeof AuthRoute
   '/billeteras': typeof BilleterasRoute
+  '/metas': typeof MetasRoute
   '/onboarding': typeof OnboardingRoute
   '/perfil': typeof PerfilRoute
   '/presupuesto': typeof PresupuestoRoute
@@ -102,6 +110,7 @@ export interface FileRoutesById {
   '/ajustes': typeof AjustesRoute
   '/auth': typeof AuthRoute
   '/billeteras': typeof BilleterasRoute
+  '/metas': typeof MetasRoute
   '/onboarding': typeof OnboardingRoute
   '/perfil': typeof PerfilRoute
   '/presupuesto': typeof PresupuestoRoute
@@ -116,6 +125,7 @@ export interface FileRouteTypes {
     | '/ajustes'
     | '/auth'
     | '/billeteras'
+    | '/metas'
     | '/onboarding'
     | '/perfil'
     | '/presupuesto'
@@ -128,6 +138,7 @@ export interface FileRouteTypes {
     | '/ajustes'
     | '/auth'
     | '/billeteras'
+    | '/metas'
     | '/onboarding'
     | '/perfil'
     | '/presupuesto'
@@ -140,6 +151,7 @@ export interface FileRouteTypes {
     | '/ajustes'
     | '/auth'
     | '/billeteras'
+    | '/metas'
     | '/onboarding'
     | '/perfil'
     | '/presupuesto'
@@ -153,6 +165,7 @@ export interface RootRouteChildren {
   AjustesRoute: typeof AjustesRoute
   AuthRoute: typeof AuthRoute
   BilleterasRoute: typeof BilleterasRoute
+  MetasRoute: typeof MetasRoute
   OnboardingRoute: typeof OnboardingRoute
   PerfilRoute: typeof PerfilRoute
   PresupuestoRoute: typeof PresupuestoRoute
@@ -195,6 +208,13 @@ declare module '@tanstack/react-router' {
       path: '/onboarding'
       fullPath: '/onboarding'
       preLoaderRoute: typeof OnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/metas': {
+      id: '/metas'
+      path: '/metas'
+      fullPath: '/metas'
+      preLoaderRoute: typeof MetasRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/billeteras': {
@@ -241,6 +261,7 @@ const rootRouteChildren: RootRouteChildren = {
   AjustesRoute: AjustesRoute,
   AuthRoute: AuthRoute,
   BilleterasRoute: BilleterasRoute,
+  MetasRoute: MetasRoute,
   OnboardingRoute: OnboardingRoute,
   PerfilRoute: PerfilRoute,
   PresupuestoRoute: PresupuestoRoute,
