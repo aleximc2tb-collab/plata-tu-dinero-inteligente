@@ -20,6 +20,8 @@ export const Route = createFileRoute("/resumen")({
 function Resumen() {
   const { user } = useAuth();
   const { wallets, transactions, refresh } = useFinance();
+  const cardAlerts = useCardAlerts(wallets, transactions);
+  const urgentCards = cardAlerts.filter((a) => a.level === "urgent" || a.level === "warn");
 
   useEffect(() => {
     if (!user) return;
