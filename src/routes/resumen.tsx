@@ -87,6 +87,28 @@ function Resumen() {
           </p>
         </div>
 
+        {urgentCards.length > 0 && (
+          <Link to="/billeteras" className="mt-4 block tap">
+            <div className="rounded-2xl p-4 border border-danger/60 bg-danger/5 flex items-center gap-3">
+              <div className="h-10 w-10 rounded-xl bg-danger/15 grid place-items-center">
+                <AlertTriangle className="h-5 w-5 text-danger" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold">
+                  {urgentCards.length === 1
+                    ? `${urgentCards[0].wallet.name} vence pronto`
+                    : `${urgentCards.length} tarjetas requieren atención`}
+                </p>
+                <p className="text-xs text-muted-foreground truncate">
+                  {urgentCards[0].daysToDue !== null && urgentCards[0].daysToDue <= 3
+                    ? `Vencimiento en ${urgentCards[0].daysToDue} días`
+                    : `Cierre en ${urgentCards[0].daysToClose} días`}
+                </p>
+              </div>
+            </div>
+          </Link>
+        )}
+
         <div className="mt-6 flex items-center justify-between mb-3">
           <h3 className="text-sm font-semibold uppercase tracking-widest text-muted-foreground">Última actividad</h3>
           {transactions.length > 0 && (
