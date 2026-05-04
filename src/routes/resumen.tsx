@@ -6,9 +6,10 @@ import { EmptyState } from "@/components/EmptyState";
 import { RequireAuth } from "@/components/RequireAuth";
 import { greeting, daysUntilMonthEnd } from "@/lib/format";
 import { useFinance } from "@/hooks/useFinance";
+import { useCardAlerts } from "@/hooks/useCardAlerts";
 import { useAuth } from "@/hooks/useAuth";
 import { processDueRecurring } from "@/hooks/useRecurring";
-import { ArrowDownRight, ArrowUpRight, TrendingUp, Sparkles } from "lucide-react";
+import { ArrowDownRight, ArrowUpRight, TrendingUp, Sparkles, AlertTriangle } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/resumen")({
