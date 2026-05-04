@@ -1,16 +1,20 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { AppShell } from "@/components/AppShell";
 import { Money } from "@/components/Money";
 import { EmptyState } from "@/components/EmptyState";
 import { RequireAuth } from "@/components/RequireAuth";
+import { ScanFab } from "@/components/ScanFab";
+import { ScanTicketSheet } from "@/components/ScanTicketSheet";
 import { greeting, daysUntilMonthEnd } from "@/lib/format";
 import { useFinance } from "@/hooks/useFinance";
 import { useCardAlerts } from "@/hooks/useCardAlerts";
 import { useAuth } from "@/hooks/useAuth";
 import { processDueRecurring } from "@/hooks/useRecurring";
-import { ArrowDownRight, ArrowUpRight, TrendingUp, Sparkles, AlertTriangle } from "lucide-react";
+import { ArrowDownRight, ArrowUpRight, TrendingUp, Sparkles, AlertTriangle, Zap, X } from "lucide-react";
 import { Link } from "@tanstack/react-router";
+
+const SCAN_HINT_KEY = "plata.scanHintSeen";
 
 export const Route = createFileRoute("/resumen")({
   head: () => ({ meta: [{ title: "Resumen — Plata" }, { name: "description", content: "Tu balance, ingresos y gastos del mes en un vistazo." }] }),
@@ -22,11 +26,34 @@ function Resumen() {
   const { wallets, transactions, refresh } = useFinance();
   const cardAlerts = useCardAlerts(wallets, transactions);
   const urgentCards = cardAlerts.filter((a) => a.level === "urgent" || a.level === "warn");
+  const [scanOpen, setScanOpen] = useState(false);
+  const [showHint, setShowHint] = useState(false);
 
   useEffect(() => {
     if (!user) return;
     processDueRecurring(user.id).then((n) => { if (n > 0) refresh(); });
   }, [user, refresh]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (!localStorage.getItem(SCAN_HINT_KEY)) {
+      const t = setTimeout(() => setShowHint(true), 800);
+      return () => clearTimeout(t);
+    }
+  }, []);
+
+  const dismissHint = () => {
+    setShowHint(false);
+    try { localStorage.setItem(SCAN_HINT_KEY, "1"); } catch { /* noop */ }
+  };
+
+  const openScan = () => {
+    dismissHint();
+    setScanOpen(true);
+    if (typeof navigator !== "undefined" && "vibrate" in navigator) {
+      try { navigator.vibrate?.(15); } catch { /* noop */ }
+    }
+  };
   const total = wallets.reduce((s, w) => s + (w.balance ?? 0), 0);
   const month = new Date().getMonth();
   const monthTx = transactions.filter((t) => new Date(t.occurred_at).getMonth() === month);
