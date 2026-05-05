@@ -77,10 +77,38 @@ export function ScanTicketSheet({ open, onClose, wallets, onCreated }: Props) {
 
   const saveTx = async (e: React.FormEvent) => {
     e.preventDefault();
-    const amt = Number(amount.replace(/\./g, "").replace(",", "."));
-    if (!user || !walletId || !amt) return;
+    const amt = parseAmount(amount);
+    if (!user) { toast.error("Sesión no válida"); return; }
+    if (!walletId) { toast.error("Elegí una billetera"); return; }
+    if (!isValidAmount(amt)) { toast.error("Monto inválido"); return; }
+    if (!date) { toast.error("Fecha requerida"); return; }
+
     setBusy(true);
     const emoji = CATEGORY_EMOJI[category] ?? "🧾";
+    const cleanMerchant = (merchant || "").trim() || null;
+    const occurredAt = new Date(date + "T12:00:00").toISOString();
+
+    // Dedup en cliente: mismo monto + fecha + comercio
+    if (cleanMerchant) {
+      const dayStart = new Date(date + "T00:00:00").toISOString();
+      const dayEnd = new Date(date + "T23:59:59").toISOString();
+      const { data: dupes } = await supabase
+        .from("transactions")
+        .select("id")
+        .eq("user_id", user.id)
+        .eq("amount", amt)
+        .eq("merchant", cleanMerchant)
+        .gte("occurred_at", dayStart)
+        .lte("occurred_at", dayEnd)
+        .is("deleted_at", null)
+        .limit(1);
+      if (dupes && dupes.length > 0) {
+        setBusy(false);
+        toast.error("Ticket duplicado", { description: "Ya registraste este gasto." });
+        return;
+      }
+    }
+
     const { error } = await supabase.from("transactions").insert({
       user_id: user.id,
       wallet_id: walletId,
@@ -88,12 +116,23 @@ export function ScanTicketSheet({ open, onClose, wallets, onCreated }: Props) {
       amount: amt,
       category,
       category_emoji: emoji,
-      notes: merchant ? `🧾 ${merchant}` : null,
-      occurred_at: new Date(date + "T12:00:00").toISOString(),
+      notes: cleanMerchant ? `🧾 ${cleanMerchant}` : null,
+      merchant: cleanMerchant,
+      occurred_at: occurredAt,
     });
     setBusy(false);
-    if (!error) { onCreated(); handleClose(); }
-    else setError(error.message);
+    if (error) {
+      if (error.code === "23505") {
+        toast.error("Ticket duplicado", { description: "Ya estaba registrado." });
+      } else {
+        toast.error("No se pudo guardar", { description: error.message });
+        setError(error.message);
+      }
+      return;
+    }
+    toast.success("Gasto agregado", { description: cleanMerchant ?? undefined });
+    onCreated();
+    handleClose();
   };
 
   return (
