@@ -175,9 +175,11 @@ export type Database = {
           created_at: string
           deleted_at: string | null
           id: string
+          merchant: string | null
           notes: string | null
           occurred_at: string
           recurring_id: string | null
+          source_name: string | null
           type: Database["public"]["Enums"]["tx_type"]
           user_id: string
           wallet_id: string
@@ -189,9 +191,11 @@ export type Database = {
           created_at?: string
           deleted_at?: string | null
           id?: string
+          merchant?: string | null
           notes?: string | null
           occurred_at?: string
           recurring_id?: string | null
+          source_name?: string | null
           type: Database["public"]["Enums"]["tx_type"]
           user_id: string
           wallet_id: string
@@ -203,9 +207,11 @@ export type Database = {
           created_at?: string
           deleted_at?: string | null
           id?: string
+          merchant?: string | null
           notes?: string | null
           occurred_at?: string
           recurring_id?: string | null
+          source_name?: string | null
           type?: Database["public"]["Enums"]["tx_type"]
           user_id?: string
           wallet_id?: string
