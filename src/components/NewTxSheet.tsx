@@ -3,7 +3,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { Sheet } from "./Sheet";
 import { useAuth } from "@/hooks/useAuth";
 import type { Wallet } from "@/hooks/useFinance";
+import { parseAmount, isValidAmount } from "@/utils/money";
 import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 const CATEGORIES = [
   { name: "Comida", emoji: "🍔" }, { name: "Supermercado", emoji: "🛒" },
@@ -14,6 +16,8 @@ const CATEGORIES = [
   { name: "Ahorro", emoji: "🏆" }, { name: "Otros", emoji: "✨" },
 ];
 
+const SOURCE_SUGGESTIONS = ["Sueldo", "Freelance", "Venta", "Reintegro", "Regalo", "Otro"];
+
 export function NewTxSheet({ open, onClose, wallets, onCreated }: { open: boolean; onClose: () => void; wallets: Wallet[]; onCreated: () => void }) {
   const { user } = useAuth();
   const [type, setType] = useState<"gasto" | "ingreso">("gasto");
@@ -21,23 +25,41 @@ export function NewTxSheet({ open, onClose, wallets, onCreated }: { open: boolea
   const [walletId, setWalletId] = useState("");
   const [cat, setCat] = useState(CATEGORIES[0]);
   const [notes, setNotes] = useState("");
+  const [sourceName, setSourceName] = useState("");
   const [busy, setBusy] = useState(false);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     const w = walletId || wallets[0]?.id;
-    const amt = Number(amount.replace(/\./g, "").replace(",", "."));
-    if (!user || !w || !amt) return;
+    const amt = parseAmount(amount);
+
+    if (!user) { toast.error("Sesión no válida"); return; }
+    if (!w) { toast.error("Elegí una billetera"); return; }
+    if (!isValidAmount(amt)) { toast.error("Ingresá un monto válido"); return; }
+    if (type === "ingreso" && !sourceName.trim()) {
+      toast.error("Indicá de dónde viene el ingreso");
+      return;
+    }
+
     setBusy(true);
     const { error } = await supabase.from("transactions").insert({
-      user_id: user.id, wallet_id: w, type, amount: amt,
-      category: cat.name, category_emoji: cat.emoji, notes: notes || null,
+      user_id: user.id,
+      wallet_id: w,
+      type,
+      amount: amt,
+      category: cat.name,
+      category_emoji: cat.emoji,
+      notes: notes || null,
+      source_name: type === "ingreso" ? sourceName.trim() : null,
     });
     setBusy(false);
-    if (!error) {
-      setAmount(""); setNotes("");
-      onCreated(); onClose();
+    if (error) {
+      toast.error("No se pudo registrar", { description: error.message });
+      return;
     }
+    toast.success(type === "ingreso" ? "Ingreso registrado" : "Gasto agregado");
+    setAmount(""); setNotes(""); setSourceName("");
+    onCreated(); onClose();
   };
 
   return (
@@ -59,6 +81,32 @@ export function NewTxSheet({ open, onClose, wallets, onCreated }: { open: boolea
           className="w-full h-12 rounded-xl bg-muted px-4 text-sm outline-none">
           {wallets.map((w) => <option key={w.id} value={w.id}>{w.name}</option>)}
         </select>
+
+        {type === "ingreso" && (
+          <div className="space-y-2 animate-fade-up">
+            <label className="block">
+              <span className="text-[11px] uppercase tracking-wider text-muted-foreground">¿De dónde viene?</span>
+              <input
+                value={sourceName}
+                onChange={(e) => setSourceName(e.target.value)}
+                placeholder="Sueldo, freelance, venta…"
+                className="mt-1 w-full h-11 rounded-xl bg-muted px-4 text-sm outline-none focus:ring-2 focus:ring-primary"
+              />
+            </label>
+            <div className="flex flex-wrap gap-1.5">
+              {SOURCE_SUGGESTIONS.map((s) => (
+                <button
+                  type="button"
+                  key={s}
+                  onClick={() => setSourceName(s)}
+                  className={`tap text-xs px-2.5 h-7 rounded-full ${sourceName === s ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}
+                >
+                  {s}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
         <div className="grid grid-cols-4 gap-2">
           {CATEGORIES.map((c) => (

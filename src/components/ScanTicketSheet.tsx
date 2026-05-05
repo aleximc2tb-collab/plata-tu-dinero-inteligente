@@ -3,7 +3,9 @@ import { Sheet } from "./Sheet";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import type { Wallet } from "@/hooks/useFinance";
+import { parseAmount, isValidAmount } from "@/utils/money";
 import { Link2, Camera, Loader2, ArrowLeft, Sparkles } from "lucide-react";
+import { toast } from "sonner";
 
 const CATEGORY_EMOJI: Record<string, string> = {
   Comida: "🍔", Supermercado: "🛒", Transporte: "🚗", Salidas: "🍻",
