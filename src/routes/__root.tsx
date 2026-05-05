@@ -1,4 +1,5 @@
 import { Outlet, createRootRoute, HeadContent, Scripts, Link } from "@tanstack/react-router";
+import { Toaster } from "@/components/ui/sonner";
 import appCss from "../styles.css?url";
 
 function NotFoundComponent() {
@@ -39,7 +40,7 @@ function RootShell({ children }: { children: React.ReactNode }) {
   return (
     <html lang="es-AR">
       <head><HeadContent /></head>
-      <body>{children}<Scripts /></body>
+      <body>{children}<Toaster position="top-center" richColors /><Scripts /></body>
     </html>
   );
 }

@@ -164,18 +164,16 @@ function Resumen() {
       </section>
 
       {showHint && (
-        <div className="fixed bottom-44 right-5 z-40 max-w-[260px] animate-fade-up">
-          <div className="relative rounded-2xl glass-gold p-3 pr-8 shadow-elegant border border-primary/30">
+        <div className="fixed bottom-44 left-1/2 -translate-x-1/2 z-40 max-w-[240px] animate-fade-up">
+          <div className="relative rounded-2xl glass-gold px-3 py-2 pr-8 shadow-elegant border border-primary/30">
             <button onClick={dismissHint} aria-label="Cerrar" className="tap absolute top-1.5 right-1.5 h-6 w-6 grid place-items-center rounded-full hover:bg-muted">
               <X className="h-3.5 w-3.5 text-muted-foreground" />
             </button>
-            <div className="flex items-start gap-2">
-              <Zap className="h-4 w-4 text-primary shrink-0 mt-0.5" />
-              <p className="text-xs leading-snug">
-                <span className="font-semibold">Tip:</span> escaneá tickets o pegá links para cargar gastos más rápido ⚡
-              </p>
+            <div className="flex items-center gap-2">
+              <Zap className="h-4 w-4 text-primary shrink-0" />
+              <p className="text-xs leading-snug font-medium">Escaneá tu ticket ⚡</p>
             </div>
-            <div className="absolute -bottom-1.5 right-6 h-3 w-3 rotate-45 bg-gold-soft border-r border-b border-primary/30" />
+            <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 h-3 w-3 rotate-45 bg-gold-soft border-r border-b border-primary/30" />
           </div>
         </div>
       )}

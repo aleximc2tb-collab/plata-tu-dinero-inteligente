@@ -1,6 +1,8 @@
 import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./useAuth";
+import { withBalances } from "@/services/balanceService";
+import { parseAmount } from "@/utils/money";
 
 export type WalletType = "efectivo" | "banco" | "mercadopago" | "uala" | "naranja" | "credito";
 
@@ -23,6 +25,8 @@ export interface Tx {
   category_emoji: string;
   notes: string | null;
   occurred_at: string;
+  source_name?: string | null;
+  merchant?: string | null;
 }
 
 export interface Budget {
@@ -58,21 +62,21 @@ export function useFinance() {
       supabase.from("transactions").select("*").is("deleted_at", null).order("occurred_at", { ascending: false }),
       supabase.from("budget_categories").select("*").order("created_at"),
     ]);
-    const txs = (t.data ?? []) as Tx[];
-    const ws = ((w.data ?? []) as Wallet[]).map((wal) => {
-      const delta = txs
-        .filter((x) => x.wallet_id === wal.id)
-        .reduce((s, x) => s + (x.type === "ingreso" ? Number(x.amount) : -Number(x.amount)), 0);
-      return { ...wal, initial_balance: Number(wal.initial_balance), balance: Number(wal.initial_balance) + delta };
-    });
+    // Normalizar todos los montos a number ANTES de cualquier cálculo
+    const txs = ((t.data ?? []) as Tx[]).map((x) => ({
+      ...x,
+      amount: parseAmount(x.amount) ?? 0,
+    }));
+    const rawWallets = (w.data ?? []) as Wallet[];
+    const ws = withBalances(rawWallets, txs);
     const bs = ((b.data ?? []) as Budget[]).map((bud) => {
       const spent = txs
         .filter((x) => x.type === "gasto" && x.category.toLowerCase() === bud.name.toLowerCase())
-        .reduce((s, x) => s + Number(x.amount), 0);
-      return { ...bud, assigned: Number(bud.assigned), spent };
+        .reduce((s, x) => s + x.amount, 0);
+      return { ...bud, assigned: parseAmount(bud.assigned) ?? 0, spent };
     });
     setWallets(ws);
-    setTransactions(txs.map((x) => ({ ...x, amount: Number(x.amount) })));
+    setTransactions(txs);
     setBudgets(bs);
     setLoading(false);
   }, [user]);
