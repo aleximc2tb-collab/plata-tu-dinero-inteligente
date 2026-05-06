@@ -11,6 +11,7 @@ import { NewRecurringSheet } from "@/components/NewRecurringSheet";
 import { supabase } from "@/integrations/supabase/client";
 import { Plus, Trash2, Pause, Play, Repeat } from "lucide-react";
 import { formatDate } from "@/lib/format";
+import { HelpHint } from "@/components/HelpHint";
 
 export const Route = createFileRoute("/recurrentes")({
   head: () => ({ meta: [{ title: "Recurrentes — Plata" }, { name: "description", content: "Sueldo, alquiler, suscripciones y cuotas en piloto automático." }] }),
@@ -50,7 +51,13 @@ function Recurrentes() {
             <Repeat className="h-6 w-6 text-primary" />
           </div>
           <div className="flex-1">
-            <p className="text-sm font-semibold">Piloto automático</p>
+            <p className="text-sm font-semibold inline-flex items-center gap-1.5">
+              Piloto automático
+              <HelpHint title="Piloto automático">
+                <p>Sueldos, alquiler, suscripciones y cuotas se cargan solos en la fecha que indiques.</p>
+                <p>Podés pausar o eliminar una recurrencia en cualquier momento.</p>
+              </HelpHint>
+            </p>
             <p className="text-xs text-muted-foreground">
               {processed && processed > 0
                 ? `Generamos ${processed} movimiento${processed === 1 ? "" : "s"} pendientes.`

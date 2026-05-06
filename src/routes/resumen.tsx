@@ -6,6 +6,7 @@ import { EmptyState } from "@/components/EmptyState";
 import { RequireAuth } from "@/components/RequireAuth";
 import { ScanFab } from "@/components/ScanFab";
 import { ScanTicketSheet } from "@/components/ScanTicketSheet";
+import { HelpHint } from "@/components/HelpHint";
 import { greeting, daysUntilMonthEnd } from "@/lib/format";
 import { useFinance } from "@/hooks/useFinance";
 import { useCardAlerts } from "@/hooks/useCardAlerts";
@@ -89,6 +90,10 @@ function Resumen() {
           <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full" style={{ background: "var(--gradient-gold)", opacity: 0.15, filter: "blur(30px)" }} />
           <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-muted-foreground">
             <Sparkles className="h-3.5 w-3.5 text-primary" /> Balance total
+            <HelpHint title="Balance total">
+              <p>Es la suma de saldos de todas tus billeteras (efectivo, banco, MP, etc.).</p>
+              <p>Las tarjetas de crédito muestran lo gastado del límite, no plata tuya.</p>
+            </HelpHint>
           </div>
           <div className="mt-2"><Money value={total} animate className="text-5xl font-black" /></div>
           <p className="mt-3 text-xs text-muted-foreground">
