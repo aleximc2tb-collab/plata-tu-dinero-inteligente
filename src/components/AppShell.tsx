@@ -34,23 +34,20 @@ export function AppShell({ children, title }: { children: React.ReactNode; title
           {tabs.map((t, i) => {
             const active = path.startsWith(t.to);
             const Icon = t.icon;
-            // Espacio central para FAB
-            const isCenterGap = i === 1;
-            return (
-              <>
-                <Link
-                  key={t.to}
-                  to={t.to}
-                  className={`tap flex-1 flex flex-col items-center gap-1 py-2 rounded-2xl ${
-                    active ? "text-primary" : "text-muted-foreground"
-                  }`}
-                >
-                  <Icon className="h-5 w-5" strokeWidth={active ? 2.2 : 1.8} />
-                  <span className="text-[10px] font-medium tracking-wide">{t.label}</span>
-                </Link>
-                {isCenterGap && <span key="gap" className="w-16 shrink-0" aria-hidden />}
-              </>
-            );
+            const items = [
+              <Link
+                key={t.to}
+                to={t.to}
+                className={`tap flex-1 flex flex-col items-center gap-1 py-2 rounded-2xl ${
+                  active ? "text-primary" : "text-muted-foreground"
+                }`}
+              >
+                <Icon className="h-5 w-5" strokeWidth={active ? 2.2 : 1.8} />
+                <span className="text-[10px] font-medium tracking-wide">{t.label}</span>
+              </Link>,
+            ];
+            if (i === 1) items.push(<span key={`gap-${i}`} className="w-16 shrink-0" aria-hidden />);
+            return items;
           })}
         </div>
       </nav>
