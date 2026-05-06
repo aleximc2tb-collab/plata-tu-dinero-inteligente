@@ -20,7 +20,7 @@ function Perfil() {
   return (
     <AppShell title="Perfil">
       <div className="animate-fade-up flex flex-col items-center text-center mt-6">
-        <div className="h-24 w-24 rounded-full glass-gold grid place-items-center text-3xl font-black text-primary shadow-glow">{initial}</div>
+        <div className="h-24 w-24 rounded-full bg-primary/10 grid place-items-center text-3xl font-bold text-primary border border-primary/20">{initial}</div>
         <h2 className="mt-4 text-xl font-bold">{user?.user_metadata?.display_name || user?.email?.split("@")[0]}</h2>
         <p className="text-sm text-muted-foreground">{user?.email}</p>
 

@@ -1,13 +1,14 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Wallet, PencilLine } from "lucide-react";
+import { Logo } from "@/components/Logo";
 
 export const Route = createFileRoute("/onboarding")({ component: Onboarding });
 
 const steps = [
-  { emoji: "🏆", title: "Bienvenido a Plata", desc: "Un asistente financiero para que cada peso tenga un propósito." },
-  { emoji: "💳", title: "Agregá tus billeteras", desc: "Efectivo, banco, Mercado Pago, Ualá, tarjetas. Todo en un solo lugar." },
-  { emoji: "✍️", title: "Registrá tus gastos", desc: "Anotá rápido y entendé en qué se te va la plata, sin planillas." },
+  { Icon: Logo as unknown as typeof Wallet, isLogo: true, title: "Bienvenido a MangoX", desc: "Tus finanzas, sin vueltas. Controlá tu plata de forma simple." },
+  { Icon: Wallet, isLogo: false, title: "Agregá tus billeteras", desc: "Efectivo, banco, Mercado Pago, tarjetas. Todo en un solo lugar." },
+  { Icon: PencilLine, isLogo: false, title: "Registrá tus gastos", desc: "Anotá rápido y entendé en qué se te va la plata, sin planillas." },
 ];
 
 function Onboarding() {
@@ -37,8 +38,10 @@ function Onboarding() {
       </div>
 
       <div key={i} className="flex-1 flex flex-col items-center justify-center text-center animate-fade-up">
-        <div className="h-32 w-32 rounded-[2rem] glass-gold grid place-items-center text-6xl shadow-glow mb-8">{s.emoji}</div>
-        <h2 className="text-3xl font-black tracking-tight mb-3">{s.title}</h2>
+        <div className="h-32 w-32 rounded-3xl bg-card border border-border grid place-items-center mb-8 shadow-elegant">
+          {s.isLogo ? <Logo size={96} /> : <s.Icon className="h-14 w-14 text-primary" strokeWidth={1.6} />}
+        </div>
+        <h2 className="text-2xl font-bold tracking-tight mb-3">{s.title}</h2>
         <p className="text-base text-muted-foreground max-w-xs">{s.desc}</p>
       </div>
 
