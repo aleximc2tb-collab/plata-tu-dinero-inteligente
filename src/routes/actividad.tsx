@@ -6,12 +6,13 @@ import { EmptyState } from "@/components/EmptyState";
 import { RequireAuth } from "@/components/RequireAuth";
 import { useFinance } from "@/hooks/useFinance";
 import { NewTxSheet } from "@/components/NewTxSheet";
-import { Plus, Search, Trash2 } from "lucide-react";
+import { CategoryIcon } from "@/components/CategoryIcon";
+import { Plus, Search, Trash2, Receipt } from "lucide-react";
 import { formatDate } from "@/lib/format";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/actividad")({
-  head: () => ({ meta: [{ title: "Actividad — Plata" }, { name: "description", content: "Tus ingresos y gastos al detalle." }] }),
+  head: () => ({ meta: [{ title: "Actividad — MangoX" }, { name: "description", content: "Tus ingresos y gastos al detalle." }] }),
   component: () => <RequireAuth><Actividad /></RequireAuth>,
 });
 
@@ -38,13 +39,13 @@ function Actividad() {
   return (
     <AppShell title="Actividad">
       <section className="animate-fade-up">
-        <div className="glass rounded-2xl px-4 h-12 flex items-center gap-3">
+        <div className="rounded-2xl px-4 h-12 bg-card border border-border flex items-center gap-3">
           <Search className="h-4 w-4 text-muted-foreground" />
           <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Buscar gasto, categoría…" className="flex-1 bg-transparent outline-none text-sm placeholder:text-muted-foreground" />
         </div>
 
         {transactions.length === 0 ? (
-          <EmptyState emoji="📝" title="Todo tranquilo por acá"
+          <EmptyState icon={Receipt} title="Todo tranquilo por acá"
             description={wallets.length ? "Registrá tu primer movimiento para empezar." : "Primero creá una billetera."}
             action={
               wallets.length
@@ -60,13 +61,15 @@ function Actividad() {
                   {items.map((t) => {
                     const wallet = wallets.find((w) => w.id === t.wallet_id);
                     return (
-                      <div key={t.id} className="glass rounded-2xl p-4 flex items-center gap-3">
-                        <div className="h-11 w-11 rounded-xl bg-muted grid place-items-center text-xl">{t.category_emoji}</div>
+                      <div key={t.id} className="rounded-2xl p-4 bg-card border border-border flex items-center gap-3">
+                        <div className="h-11 w-11 rounded-xl bg-muted grid place-items-center">
+                          <CategoryIcon name={t.category} size={20} />
+                        </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium truncate">{t.category}</p>
                           <p className="text-xs text-muted-foreground truncate">{wallet?.name}{t.notes ? ` · ${t.notes}` : ""}</p>
                         </div>
-                        <Money value={t.type === "gasto" ? -t.amount : t.amount} className={`text-sm font-semibold ${t.type === "ingreso" ? "text-primary" : ""}`} />
+                        <Money value={t.type === "gasto" ? -t.amount : t.amount} className={`text-sm font-semibold ${t.type === "ingreso" ? "text-accent" : "text-foreground"}`} />
                         <button onClick={() => remove(t.id)} className="tap text-muted-foreground hover:text-danger">
                           <Trash2 className="h-4 w-4" />
                         </button>
