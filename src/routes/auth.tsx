@@ -4,9 +4,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { lovable } from "@/integrations/lovable";
 import { Mail, Lock, Loader2 } from "lucide-react";
+import { Logo } from "@/components/Logo";
 
 export const Route = createFileRoute("/auth")({
-  head: () => ({ meta: [{ title: "Ingresar — Plata" }] }),
+  head: () => ({ meta: [{ title: "Ingresar — MangoX" }] }),
   component: Auth,
 });
 
@@ -61,12 +62,12 @@ function Auth() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background px-6 py-10">
-      <div className="flex flex-col items-center mb-10 animate-fade-up">
-        <div className="h-16 w-16 rounded-2xl grid place-items-center shadow-glow" style={{ background: "var(--gradient-gold)" }}>
-          <span className="text-2xl font-black text-background">P</span>
-        </div>
-        <h1 className="mt-4 text-2xl font-black tracking-tight">Plata</h1>
-        <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground mt-1">
+      <div className="flex flex-col items-center mb-8 animate-fade-up">
+        <Logo size={72} />
+        <h1 className="mt-3 text-2xl font-bold tracking-tight">
+          Mango<span className="text-primary">X</span>
+        </h1>
+        <p className="text-sm text-muted-foreground mt-1">
           {mode === "login" ? "Bienvenido de vuelta" : "Creá tu cuenta"}
         </p>
       </div>
@@ -77,7 +78,7 @@ function Auth() {
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Tu nombre"
-            className="w-full h-14 rounded-2xl glass px-4 text-sm outline-none focus:ring-2 focus:ring-primary"
+            className="w-full h-14 rounded-2xl bg-card border border-border px-4 text-sm outline-none focus:ring-2 focus:ring-primary"
           />
         )}
         <div className="relative">
@@ -88,7 +89,7 @@ function Auth() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="email@ejemplo.com"
-            className="w-full h-14 rounded-2xl glass pl-11 pr-4 text-sm outline-none focus:ring-2 focus:ring-primary"
+            className="w-full h-14 rounded-2xl bg-card border border-border pl-11 pr-4 text-sm outline-none focus:ring-2 focus:ring-primary"
           />
         </div>
         <div className="relative">
@@ -100,7 +101,7 @@ function Auth() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Contraseña"
-            className="w-full h-14 rounded-2xl glass pl-11 pr-4 text-sm outline-none focus:ring-2 focus:ring-primary"
+            className="w-full h-14 rounded-2xl bg-card border border-border pl-11 pr-4 text-sm outline-none focus:ring-2 focus:ring-primary"
           />
         </div>
 

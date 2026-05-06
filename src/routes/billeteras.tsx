@@ -9,12 +9,13 @@ import { useCardAlerts } from "@/hooks/useCardAlerts";
 import { NewWalletSheet } from "@/components/NewWalletSheet";
 import { CardConfigSheet } from "@/components/CardConfigSheet";
 import { CardAlertCard } from "@/components/CardAlertCard";
-import { Plus, Trash2 } from "lucide-react";
+import { WalletIconView } from "@/components/WalletIconView";
+import { Plus, Trash2, Wallet as WalletLucide } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { HelpHint } from "@/components/HelpHint";
 
 export const Route = createFileRoute("/billeteras")({
-  head: () => ({ meta: [{ title: "Billeteras — Plata" }, { name: "description", content: "Gestioná efectivo, bancos, Mercado Pago, Ualá y tarjetas." }] }),
+  head: () => ({ meta: [{ title: "Billeteras — MangoX" }, { name: "description", content: "Tus billeteras y tarjetas en un solo lugar." }] }),
   component: () => <RequireAuth><Billeteras /></RequireAuth>,
 });
 
@@ -36,7 +37,7 @@ function Billeteras() {
   return (
     <AppShell title="Billeteras">
       <section className="animate-fade-up">
-        <div className="glass-gold rounded-3xl p-6">
+        <div className="rounded-3xl p-6 bg-card border border-border shadow-elegant">
           <p className="text-xs uppercase tracking-widest text-muted-foreground inline-flex items-center gap-1.5">
             Patrimonio
             <HelpHint title="Patrimonio">
@@ -44,18 +45,18 @@ function Billeteras() {
               <p>No incluye deudas de tarjeta de crédito.</p>
             </HelpHint>
           </p>
-          <Money value={total} animate className="block mt-1 text-4xl font-black" />
+          <Money value={total} animate className="block mt-1 text-3xl font-bold" />
         </div>
 
         {wallets.length === 0 ? (
-          <EmptyState emoji="💳" title="Sin billeteras todavía"
+          <EmptyState icon={WalletLucide} title="Sin billeteras todavía"
             description="Agregá tu efectivo, banco, Mercado Pago o tarjeta para empezar."
             action={<button onClick={() => setOpen(true)} className="tap h-12 px-5 rounded-2xl bg-primary text-primary-foreground font-semibold">Crear billetera</button>} />
         ) : (
           <>
             {alerts.length > 0 && (
               <div className="mt-5">
-                <h3 className="text-xs uppercase tracking-widest text-muted-foreground mb-3">Tarjetas de crédito</h3>
+                <h3 className="text-sm font-semibold mb-3">Tarjetas de crédito</h3>
                 <div className="space-y-3">
                   {alerts.map((a) => (
                     <div key={a.wallet.id} className="relative group">
@@ -71,19 +72,21 @@ function Billeteras() {
 
             {nonCredit.length > 0 && (
               <div className="mt-5">
-                <h3 className="text-xs uppercase tracking-widest text-muted-foreground mb-3">Otras billeteras</h3>
+                <h3 className="text-sm font-semibold mb-3">Otras billeteras</h3>
                 <div className="space-y-3">
                   {nonCredit.map((w) => {
                     const meta = walletMeta[w.type];
                     const negative = (w.balance ?? 0) < 0;
                     return (
-                      <div key={w.id} className="glass rounded-2xl p-5 flex items-center gap-4">
-                        <div className="h-12 w-12 rounded-2xl bg-muted grid place-items-center text-2xl">{meta.emoji}</div>
+                      <div key={w.id} className="rounded-2xl p-5 bg-card border border-border flex items-center gap-4">
+                        <div className="h-12 w-12 rounded-2xl bg-primary/10 grid place-items-center">
+                          <WalletIconView type={w.type} className="h-6 w-6" />
+                        </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-semibold truncate">{w.name}</p>
                           <p className="text-xs text-muted-foreground">{meta.label}</p>
                         </div>
-                        <Money value={w.balance ?? 0} className={`text-base font-bold ${negative ? "text-danger" : ""}`} />
+                        <Money value={w.balance ?? 0} className={`text-base font-semibold ${negative ? "text-danger" : ""}`} />
                         <button onClick={() => remove(w.id)} className="tap text-muted-foreground hover:text-danger">
                           <Trash2 className="h-4 w-4" />
                         </button>
@@ -96,7 +99,7 @@ function Billeteras() {
           </>
         )}
 
-        <button onClick={() => setOpen(true)} className="tap mt-6 w-full h-14 rounded-2xl border-2 border-primary text-primary font-semibold flex items-center justify-center gap-2">
+        <button onClick={() => setOpen(true)} className="tap mt-6 w-full h-14 rounded-2xl border-2 border-dashed border-primary/50 text-primary font-semibold flex items-center justify-center gap-2 hover:bg-primary/5">
           <Plus className="h-5 w-5" /> Nueva billetera
         </button>
       </section>
