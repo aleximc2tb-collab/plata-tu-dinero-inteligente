@@ -11,6 +11,7 @@ import { CardConfigSheet } from "@/components/CardConfigSheet";
 import { CardAlertCard } from "@/components/CardAlertCard";
 import { Plus, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { HelpHint } from "@/components/HelpHint";
 
 export const Route = createFileRoute("/billeteras")({
   head: () => ({ meta: [{ title: "Billeteras — Plata" }, { name: "description", content: "Gestioná efectivo, bancos, Mercado Pago, Ualá y tarjetas." }] }),
@@ -36,7 +37,13 @@ function Billeteras() {
     <AppShell title="Billeteras">
       <section className="animate-fade-up">
         <div className="glass-gold rounded-3xl p-6">
-          <p className="text-xs uppercase tracking-widest text-muted-foreground">Patrimonio</p>
+          <p className="text-xs uppercase tracking-widest text-muted-foreground inline-flex items-center gap-1.5">
+            Patrimonio
+            <HelpHint title="Patrimonio">
+              <p>Suma de saldos en efectivo, bancos y billeteras virtuales.</p>
+              <p>No incluye deudas de tarjeta de crédito.</p>
+            </HelpHint>
+          </p>
           <Money value={total} animate className="block mt-1 text-4xl font-black" />
         </div>
 

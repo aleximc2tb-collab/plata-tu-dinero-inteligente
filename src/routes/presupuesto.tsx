@@ -9,6 +9,7 @@ import { NewBudgetSheet } from "@/components/NewBudgetSheet";
 import { MoveBudgetSheet } from "@/components/MoveBudgetSheet";
 import { Trash2, ArrowLeftRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { HelpHint } from "@/components/HelpHint";
 
 export const Route = createFileRoute("/presupuesto")({
   head: () => ({ meta: [{ title: "Presupuesto — Plata" }, { name: "description", content: "Asigná cada peso a una categoría antes de gastarlo." }] }),
@@ -39,7 +40,13 @@ function Presupuesto() {
     <AppShell title="Presupuesto">
       <section className="animate-fade-up">
         <div className="glass-gold rounded-3xl p-6 text-center">
-          <p className="text-xs uppercase tracking-widest text-muted-foreground">Disponible para asignar</p>
+          <p className="text-xs uppercase tracking-widest text-muted-foreground inline-flex items-center gap-1.5">
+            Disponible para asignar
+            <HelpHint title="Disponible para asignar" align="center">
+              <p>Es tu patrimonio menos lo que ya pusiste en categorías.</p>
+              <p>Cada peso asignado tiene un destino concreto antes de gastarlo.</p>
+            </HelpHint>
+          </p>
           <Money value={disponible} animate className="block mt-2 text-4xl font-black text-primary" />
           <p className="mt-3 text-xs text-muted-foreground">Cada peso asignado es un peso con propósito 🏆</p>
           {monthIngresos > 0 && (

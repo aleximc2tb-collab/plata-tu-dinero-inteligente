@@ -10,6 +10,7 @@ import { useGoals, type Goal } from "@/hooks/useGoals";
 import { Plus, Trash2, Trophy } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { formatDate } from "@/lib/format";
+import { HelpHint } from "@/components/HelpHint";
 
 export const Route = createFileRoute("/metas")({
   head: () => ({ meta: [{ title: "Metas — Plata" }, { name: "description", content: "Tus metas de ahorro: progreso y aportes." }] }),
@@ -35,7 +36,13 @@ function Metas() {
       <section className="animate-fade-up">
         {goals.length > 0 && (
           <div className="glass-gold rounded-3xl p-6">
-            <p className="text-xs uppercase tracking-widest text-muted-foreground">Ahorrado total</p>
+            <p className="text-xs uppercase tracking-widest text-muted-foreground inline-flex items-center gap-1.5">
+              Ahorrado total
+              <HelpHint title="Ahorrado total">
+                <p>Es la suma de los aportes que hiciste a tus metas.</p>
+                <p>Sumá de a poco con el botón "Sumar +" en cada meta.</p>
+              </HelpHint>
+            </p>
             <Money value={totalSaved} animate className="block mt-1 text-4xl font-black" />
             <p className="text-xs text-muted-foreground mt-1">
               de <Money value={totalTarget} className="text-primary" /> en {goals.length} {goals.length === 1 ? "meta" : "metas"}
