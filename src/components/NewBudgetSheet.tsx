@@ -3,12 +3,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { Sheet } from "./Sheet";
 import { useAuth } from "@/hooks/useAuth";
 import { Loader2 } from "lucide-react";
+import { CategoryIcon } from "./CategoryIcon";
 
 const PRESETS = [
-  { emoji: "🍔", name: "Comida" }, { emoji: "🛒", name: "Supermercado" },
-  { emoji: "🚗", name: "Transporte" }, { emoji: "🍻", name: "Salidas" },
-  { emoji: "📺", name: "Suscripciones" }, { emoji: "🏆", name: "Ahorro" },
-  { emoji: "🧾", name: "Servicios" }, { emoji: "✨", name: "Otros" },
+  { emoji: "", name: "Comida" }, { emoji: "", name: "Supermercado" },
+  { emoji: "", name: "Transporte" }, { emoji: "", name: "Salidas" },
+  { emoji: "", name: "Suscripciones" }, { emoji: "", name: "Ahorro" },
+  { emoji: "", name: "Servicios" }, { emoji: "", name: "Otros" },
 ];
 
 export function NewBudgetSheet({ open, onClose, onCreated }: { open: boolean; onClose: () => void; onCreated: () => void }) {
@@ -39,20 +40,23 @@ export function NewBudgetSheet({ open, onClose, onCreated }: { open: boolean; on
   };
 
   return (
-    <Sheet open={open} onClose={onClose} title="Asignar dinero">
+    <Sheet open={open} onClose={onClose} title="Asignar plata a una categoría">
       <form onSubmit={submit} className="space-y-3">
         <div className="grid grid-cols-4 gap-2">
-          {PRESETS.map((p) => (
-            <button type="button" key={p.name} onClick={() => { setPreset(p); setName(p.name); }}
-              className={`tap rounded-xl p-2 text-center ${preset.name === p.name ? "bg-gold-soft ring-2 ring-primary" : "bg-muted"}`}>
-              <div className="text-xl">{p.emoji}</div>
-              <div className="text-[10px] mt-0.5 text-muted-foreground">{p.name}</div>
-            </button>
-          ))}
+          {PRESETS.map((p) => {
+            const active = preset.name === p.name;
+            return (
+              <button type="button" key={p.name} onClick={() => { setPreset(p); setName(p.name); }}
+                className={`tap rounded-xl p-2.5 flex flex-col items-center gap-1 ${active ? "bg-gold-soft ring-2 ring-primary" : "bg-muted"}`}>
+                <CategoryIcon name={p.name} size={22} tone={active ? "primary" : "muted"} />
+                <div className="text-[10px] text-muted-foreground">{p.name}</div>
+              </button>
+            );
+          })}
         </div>
         <input value={name} onChange={(e) => setName(e.target.value)} placeholder={`Nombre (ej: ${preset.name})`}
           className="w-full h-12 rounded-xl bg-muted px-4 text-sm outline-none focus:ring-2 focus:ring-primary" />
-        <input autoFocus value={assigned} onChange={(e) => setAssigned(e.target.value)} placeholder="Monto a asignar" inputMode="decimal"
+        <input autoFocus value={assigned} onChange={(e) => setAssigned(e.target.value)} placeholder="¿Cuánto querés asignar?" inputMode="decimal"
           className="w-full h-14 rounded-xl bg-muted px-4 text-lg font-bold text-center outline-none focus:ring-2 focus:ring-primary num" />
         <div className="flex gap-2">
           {(["semanal", "quincenal", "mensual"] as const).map((p) => (
@@ -63,7 +67,7 @@ export function NewBudgetSheet({ open, onClose, onCreated }: { open: boolean; on
           ))}
         </div>
         <button disabled={busy} className="tap w-full h-12 rounded-xl bg-primary text-primary-foreground font-semibold flex items-center justify-center gap-2 disabled:opacity-60">
-          {busy && <Loader2 className="h-4 w-4 animate-spin" />} Asignar
+          {busy && <Loader2 className="h-4 w-4 animate-spin" />} Asignar plata
         </button>
       </form>
     </Sheet>
