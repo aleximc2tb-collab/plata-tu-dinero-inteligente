@@ -63,9 +63,17 @@ function Presupuesto() {
         </div>
 
         {budgets.length === 0 ? (
-          <EmptyState icon={PieChart} title="Asigná tu primera categoría"
-            description="Antes de gastar, decidí cuánta plata querés destinar a cada cosa."
-            action={<button onClick={() => setOpen(true)} className="tap h-12 px-5 rounded-2xl bg-primary text-primary-foreground font-semibold">Crear categoría</button>} />
+          <EmptyState
+            icon={PieChart}
+            title="Dale un destino a cada peso"
+            description="Un presupuesto es decidir hoy en qué vas a usar tu plata, antes de que se vaya sola."
+            steps={[
+              "Creá una categoría (ej: Comida, Transporte).",
+              "Asignale un monto para el período.",
+              "Cuando registres un gasto, descuenta solo.",
+            ]}
+            action={<button onClick={() => setOpen(true)} className="tap h-12 px-5 rounded-2xl bg-primary text-primary-foreground font-semibold">Crear categoría</button>}
+            hint="No hace falta ser perfecto: empezá con 3 categorías y ajustá sobre la marcha." />
         ) : (
           <div className="mt-5 space-y-3">
             {budgets.filter((b) => b.period === period).map((b) => {

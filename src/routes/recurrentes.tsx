@@ -67,9 +67,17 @@ function Recurrentes() {
         </div>
 
         {items.length === 0 ? (
-          <EmptyState emoji="🔁" title="Sin recurrentes todavía"
-            description="Cargá sueldo, alquiler, Netflix o cuotas de tarjeta y olvidate."
-            action={<button onClick={() => setOpen(true)} disabled={!wallets.length} className="tap h-12 px-5 rounded-2xl bg-primary text-primary-foreground font-semibold disabled:opacity-50">Nueva recurrencia</button>} />
+          <EmptyState
+            icon={Repeat}
+            title="Cargá una vez, olvidate para siempre"
+            description="Las recurrencias son movimientos que se repiten: sueldo, alquiler, Netflix, cuotas."
+            steps={[
+              "Elegí si es ingreso o gasto.",
+              "Indicá el monto y cada cuánto se repite.",
+              "MangoX lo carga solo en la fecha exacta.",
+            ]}
+            action={<button onClick={() => setOpen(true)} disabled={!wallets.length} className="tap h-12 px-5 rounded-2xl bg-primary text-primary-foreground font-semibold disabled:opacity-50">Nueva recurrencia</button>}
+            hint={wallets.length === 0 ? "Antes necesitás al menos una billetera creada." : "Para cuotas de tarjeta indicá el total: te las cuenta automáticamente."} />
         ) : (
           <div className="mt-5 space-y-2">
             {items.map((r) => {

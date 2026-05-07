@@ -45,13 +45,25 @@ function Actividad() {
         </div>
 
         {transactions.length === 0 ? (
-          <EmptyState icon={Receipt} title="Todo tranquilo por acá"
-            description={wallets.length ? "Registrá tu primer movimiento para empezar." : "Primero creá una billetera."}
+          <EmptyState
+            icon={Receipt}
+            title={wallets.length ? "Acá vas a ver cada movimiento" : "Primero, una billetera"}
+            description={wallets.length
+              ? "Cada ingreso, gasto o movimiento queda ordenado por día. Buscá por categoría o nota."
+              : "Una billetera es donde guardás tu plata. Sin eso no podemos registrar movimientos."}
+            steps={wallets.length
+              ? [
+                  "Tocá “Registrar gasto” o el botón central.",
+                  "Elegí categoría, monto y billetera.",
+                  "Sumá una nota para acordarte después.",
+                ]
+              : undefined}
             action={
               wallets.length
-                ? <button onClick={() => setOpen(true)} className="tap h-12 px-5 rounded-2xl bg-primary text-primary-foreground font-semibold">Registrar gasto</button>
+                ? <button onClick={() => setOpen(true)} className="tap h-12 px-5 rounded-2xl bg-primary text-primary-foreground font-semibold">Registrar movimiento</button>
                 : <Link to="/billeteras" className="tap inline-flex h-12 px-5 rounded-2xl bg-primary text-primary-foreground font-semibold items-center">Crear billetera</Link>
-            } />
+            }
+            hint={wallets.length ? "Tip: el botón central escanea tickets o lee links de pago." : undefined} />
         ) : (
           <div className="mt-5 space-y-6">
             {Object.entries(groups).map(([day, items]) => (
