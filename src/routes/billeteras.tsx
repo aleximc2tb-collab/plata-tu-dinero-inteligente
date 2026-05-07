@@ -49,9 +49,17 @@ function Billeteras() {
         </div>
 
         {wallets.length === 0 ? (
-          <EmptyState icon={WalletLucide} title="Sin billeteras todavía"
-            description="Agregá tu efectivo, banco, Mercado Pago o tarjeta para empezar."
-            action={<button onClick={() => setOpen(true)} className="tap h-12 px-5 rounded-2xl bg-primary text-primary-foreground font-semibold">Crear billetera</button>} />
+          <EmptyState
+            icon={WalletLucide}
+            title="Sumá tu primera billetera"
+            description="Una billetera es un lugar donde guardás plata: efectivo, una cuenta bancaria o Mercado Pago."
+            steps={[
+              "Elegí el tipo (efectivo, banco, MP, Ualá…).",
+              "Poné el saldo actual con el que arrancás.",
+              "Listo: ya podés registrar movimientos.",
+            ]}
+            action={<button onClick={() => setOpen(true)} className="tap h-12 px-5 rounded-2xl bg-primary text-primary-foreground font-semibold">Crear billetera</button>}
+            hint="Las tarjetas de crédito se cargan acá también, pero no suman a tu patrimonio." />
         ) : (
           <>
             {alerts.length > 0 && (

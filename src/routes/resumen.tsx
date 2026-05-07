@@ -136,9 +136,21 @@ function Resumen() {
         </div>
 
         {transactions.length === 0 ? (
-          <EmptyState icon={Receipt} title="Empezá a registrar"
-            description="Cuando agregues una billetera y tu primer gasto, vas a ver tu actividad acá."
-            action={<Link to="/billeteras" className="tap inline-flex h-12 px-5 rounded-2xl bg-primary text-primary-foreground font-semibold items-center">Crear billetera</Link>} />
+          <EmptyState
+            icon={Receipt}
+            title="Tu primera semana en MangoX"
+            description="En 3 pasos vas a tener todo bajo control."
+            steps={[
+              "Creá una billetera (efectivo, banco o MP).",
+              "Cargá tu primer ingreso o gasto.",
+              "Asigná categorías para no perder el rastro.",
+            ]}
+            action={
+              wallets.length === 0
+                ? <Link to="/billeteras" className="tap inline-flex h-12 px-5 rounded-2xl bg-primary text-primary-foreground font-semibold items-center">Crear billetera</Link>
+                : <Link to="/actividad" className="tap inline-flex h-12 px-5 rounded-2xl bg-primary text-primary-foreground font-semibold items-center">Registrar movimiento</Link>
+            }
+            hint="Tip: tocá el botón central para escanear un ticket o pegar un link." />
         ) : (
           <div className="space-y-2">
             {transactions.slice(0, 5).map((t) => (

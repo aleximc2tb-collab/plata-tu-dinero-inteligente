@@ -51,9 +51,17 @@ function Metas() {
         )}
 
         {goals.length === 0 ? (
-          <EmptyState emoji="🎯" title="Sin metas todavía"
-            description="Definí un objetivo concreto: viaje, auto, fondo de emergencia. Después sumá de a poco."
-            action={<button onClick={() => setOpen(true)} className="tap h-12 px-5 rounded-2xl bg-primary text-primary-foreground font-semibold">Crear meta</button>} />
+          <EmptyState
+            icon={Trophy}
+            title="¿Para qué estás ahorrando?"
+            description="Una meta es un objetivo concreto con monto y fecha. Te ayuda a ahorrar con un porqué."
+            steps={[
+              "Ponele nombre (Viaje, Notebook, Emergencia…).",
+              "Definí cuánto querés juntar y para cuándo.",
+              "Sumá de a poco con el botón “Sumar +”.",
+            ]}
+            action={<button onClick={() => setOpen(true)} className="tap h-12 px-5 rounded-2xl bg-primary text-primary-foreground font-semibold">Crear meta</button>}
+            hint="Los aportes a metas no afectan tus billeteras: son un registro aparte." />
         ) : (
           <div className="mt-5 space-y-3">
             {goals.map((g) => {
