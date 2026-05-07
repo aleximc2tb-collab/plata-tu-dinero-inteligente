@@ -1,5 +1,6 @@
 import { Money } from "./Money";
 import { walletMeta } from "@/hooks/useFinance";
+import { WalletIconView } from "./WalletIconView";
 import type { CardAlert } from "@/hooks/useCardAlerts";
 import { AlertTriangle, CalendarClock, Settings2 } from "lucide-react";
 
@@ -11,10 +12,10 @@ const LEVEL_STYLES: Record<CardAlert["level"], string> = {
 };
 
 const LEVEL_LABEL: Record<CardAlert["level"], string> = {
-  ok: "Al día",
-  info: "Próximo",
-  warn: "Cerca del cierre",
-  urgent: "Vence pronto",
+  ok: "Todo en orden",
+  info: "Vas bien",
+  warn: "Cierra pronto",
+  urgent: "Vence en días",
 };
 
 export function CardAlertCard({ alert, onConfig }: { alert: CardAlert; onConfig: () => void }) {
@@ -24,7 +25,9 @@ export function CardAlertCard({ alert, onConfig }: { alert: CardAlert; onConfig:
   return (
     <div className={`glass rounded-2xl p-5 border ${LEVEL_STYLES[alert.level]} space-y-3`}>
       <div className="flex items-center gap-3">
-        <div className="h-11 w-11 rounded-2xl bg-muted grid place-items-center text-xl">{meta.emoji}</div>
+        <div className="h-11 w-11 rounded-2xl bg-primary/10 grid place-items-center">
+          <WalletIconView type={alert.wallet.type} className="h-5 w-5" />
+        </div>
         <div className="flex-1 min-w-0">
           <p className="text-sm font-semibold truncate">{alert.wallet.name}</p>
           <p className="text-[11px] text-muted-foreground">{LEVEL_LABEL[alert.level]}</p>
@@ -36,7 +39,7 @@ export function CardAlertCard({ alert, onConfig }: { alert: CardAlert; onConfig:
 
       {needsConfig ? (
         <button onClick={onConfig} className="w-full text-xs text-primary text-left flex items-center gap-2">
-          <AlertTriangle className="h-3.5 w-3.5" /> Configurá cierre y vencimiento para recibir alertas
+          <AlertTriangle className="h-3.5 w-3.5" /> Contanos cuándo cierra y vence para avisarte a tiempo.
         </button>
       ) : (
         <div className="grid grid-cols-2 gap-2 text-xs">
@@ -65,7 +68,7 @@ export function CardAlertCard({ alert, onConfig }: { alert: CardAlert; onConfig:
 
       {alert.pending > 0 && (
         <div className="flex items-center justify-between pt-1">
-          <span className="text-xs text-muted-foreground">A pagar</span>
+          <span className="text-xs text-muted-foreground">Te queda por pagar</span>
           <Money value={alert.pending} className="text-base font-bold text-danger" />
         </div>
       )}

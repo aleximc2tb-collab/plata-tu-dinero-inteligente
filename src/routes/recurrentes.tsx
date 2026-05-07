@@ -10,6 +10,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { NewRecurringSheet } from "@/components/NewRecurringSheet";
 import { supabase } from "@/integrations/supabase/client";
 import { Plus, Trash2, Pause, Play, Repeat } from "lucide-react";
+import { CategoryIcon } from "@/components/CategoryIcon";
 import { formatDate } from "@/lib/format";
 import { HelpHint } from "@/components/HelpHint";
 
@@ -85,7 +86,9 @@ function Recurrentes() {
               const remaining = r.installments_total ? r.installments_total - r.installments_paid : null;
               return (
                 <div key={r.id} className={`glass rounded-2xl p-4 flex items-center gap-3 ${!r.active ? "opacity-50" : ""}`}>
-                  <div className="h-11 w-11 rounded-xl bg-muted grid place-items-center text-xl">{r.category_emoji}</div>
+                  <div className="h-11 w-11 rounded-xl bg-muted grid place-items-center">
+                    <CategoryIcon name={r.category} size={20} />
+                  </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold truncate">{r.category}</p>
                     <p className="text-xs text-muted-foreground truncate">

@@ -8,6 +8,7 @@ import { NewGoalSheet } from "@/components/NewGoalSheet";
 import { ContributeGoalSheet } from "@/components/ContributeGoalSheet";
 import { useGoals, type Goal } from "@/hooks/useGoals";
 import { Plus, Trash2, Trophy } from "lucide-react";
+import { CategoryIcon } from "@/components/CategoryIcon";
 import { supabase } from "@/integrations/supabase/client";
 import { formatDate } from "@/lib/format";
 import { HelpHint } from "@/components/HelpHint";
@@ -23,7 +24,7 @@ function Metas() {
   const [active, setActive] = useState<Goal | null>(null);
 
   const remove = async (id: string) => {
-    if (!confirm("¿Eliminar esta meta?")) return;
+    if (!confirm("¿Querés eliminar esta meta? No se borra tu plata, solo el registro.")) return;
     await supabase.from("savings_goals").delete().eq("id", id);
     refresh();
   };
@@ -70,7 +71,9 @@ function Metas() {
               return (
                 <div key={g.id} className="glass rounded-2xl p-5">
                   <div className="flex items-center gap-3">
-                    <div className="h-12 w-12 rounded-2xl bg-muted grid place-items-center text-2xl">{g.emoji}</div>
+                    <div className="h-12 w-12 rounded-2xl bg-primary/10 grid place-items-center">
+                      <CategoryIcon name={g.name} size={22} />
+                    </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-semibold truncate flex items-center gap-1.5">
                         {g.name}

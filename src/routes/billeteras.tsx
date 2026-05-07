@@ -27,7 +27,7 @@ function Billeteras() {
   const total = wallets.reduce((s, w) => s + (w.balance ?? 0), 0);
 
   const remove = async (id: string) => {
-    if (!confirm("¿Eliminar esta billetera y sus transacciones?")) return;
+    if (!confirm("¿Querés eliminar esta billetera? También se borran sus movimientos.")) return;
     await supabase.from("wallets").delete().eq("id", id);
     refresh();
   };
@@ -108,7 +108,7 @@ function Billeteras() {
         )}
 
         <button onClick={() => setOpen(true)} className="tap mt-6 w-full h-14 rounded-2xl border-2 border-dashed border-primary/50 text-primary font-semibold flex items-center justify-center gap-2 hover:bg-primary/5">
-          <Plus className="h-5 w-5" /> Nueva billetera
+          <Plus className="h-5 w-5" /> Sumar billetera
         </button>
       </section>
 
