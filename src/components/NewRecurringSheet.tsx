@@ -5,12 +5,13 @@ import { useAuth } from "@/hooks/useAuth";
 import type { Wallet } from "@/hooks/useFinance";
 import type { Frequency } from "@/hooks/useRecurring";
 import { Loader2 } from "lucide-react";
+import { CategoryIcon } from "./CategoryIcon";
 
 const CATEGORIES = [
-  { name: "Sueldo", emoji: "💼" }, { name: "Alquiler", emoji: "🏠" },
-  { name: "Servicios", emoji: "🧾" }, { name: "Streaming", emoji: "📺" },
-  { name: "Tarjeta", emoji: "💳" }, { name: "Internet", emoji: "📶" },
-  { name: "Cuota", emoji: "🧮" }, { name: "Ahorro", emoji: "🏆" },
+  { name: "Sueldo", emoji: "" }, { name: "Alquiler", emoji: "" },
+  { name: "Servicios", emoji: "" }, { name: "Streaming", emoji: "" },
+  { name: "Tarjeta", emoji: "" }, { name: "Internet", emoji: "" },
+  { name: "Cuota", emoji: "" }, { name: "Ahorro", emoji: "" },
 ];
 
 interface Props { open: boolean; onClose: () => void; wallets: Wallet[]; onCreated: () => void; }
@@ -48,7 +49,7 @@ export function NewRecurringSheet({ open, onClose, wallets, onCreated }: Props) 
   };
 
   return (
-    <Sheet open={open} onClose={onClose} title="Nueva recurrencia">
+    <Sheet open={open} onClose={onClose} title="Nuevo movimiento recurrente">
       <form onSubmit={submit} className="space-y-3">
         <div className="grid grid-cols-2 gap-2">
           {(["gasto", "ingreso"] as const).map((t) => (
@@ -68,13 +69,16 @@ export function NewRecurringSheet({ open, onClose, wallets, onCreated }: Props) 
         </select>
 
         <div className="grid grid-cols-4 gap-2">
-          {CATEGORIES.map((c) => (
-            <button type="button" key={c.name} onClick={() => setCat(c)}
-              className={`tap rounded-xl p-2 text-center ${cat.name === c.name ? "bg-gold-soft ring-2 ring-primary" : "bg-muted"}`}>
-              <div className="text-xl">{c.emoji}</div>
-              <div className="text-[10px] mt-0.5 text-muted-foreground">{c.name}</div>
-            </button>
-          ))}
+          {CATEGORIES.map((c) => {
+            const active = cat.name === c.name;
+            return (
+              <button type="button" key={c.name} onClick={() => setCat(c)}
+                className={`tap rounded-xl p-2.5 flex flex-col items-center gap-1 ${active ? "bg-gold-soft ring-2 ring-primary" : "bg-muted"}`}>
+                <CategoryIcon name={c.name} size={22} tone={active ? "primary" : "muted"} />
+                <div className="text-[10px] text-muted-foreground">{c.name}</div>
+              </button>
+            );
+          })}
         </div>
 
         <div className="grid grid-cols-4 gap-2">
@@ -99,9 +103,9 @@ export function NewRecurringSheet({ open, onClose, wallets, onCreated }: Props) 
           className="w-full h-12 rounded-xl bg-muted px-4 text-sm outline-none focus:ring-2 focus:ring-primary" />
 
         <button disabled={busy || !wallets.length} className="tap w-full h-12 rounded-xl bg-primary text-primary-foreground font-semibold flex items-center justify-center gap-2 disabled:opacity-60">
-          {busy && <Loader2 className="h-4 w-4 animate-spin" />} Crear recurrencia
+          {busy && <Loader2 className="h-4 w-4 animate-spin" />} Activar piloto automático
         </button>
-        {!wallets.length && <p className="text-xs text-center text-muted-foreground">Primero creá una billetera.</p>}
+        {!wallets.length && <p className="text-xs text-center text-muted-foreground">Antes creá una billetera para asociarlo.</p>}
       </form>
     </Sheet>
   );

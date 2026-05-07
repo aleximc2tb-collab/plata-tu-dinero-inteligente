@@ -6,14 +6,15 @@ import type { Wallet } from "@/hooks/useFinance";
 import { parseAmount, isValidAmount } from "@/utils/money";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { CategoryIcon } from "./CategoryIcon";
 
 const CATEGORIES = [
-  { name: "Comida", emoji: "🍔" }, { name: "Supermercado", emoji: "🛒" },
-  { name: "Transporte", emoji: "🚗" }, { name: "Salidas", emoji: "🍻" },
-  { name: "Servicios", emoji: "🧾" }, { name: "Salud", emoji: "💊" },
-  { name: "Hogar", emoji: "🏠" }, { name: "Ropa", emoji: "👕" },
-  { name: "Streaming", emoji: "📺" }, { name: "Sueldo", emoji: "💼" },
-  { name: "Ahorro", emoji: "🏆" }, { name: "Otros", emoji: "✨" },
+  { name: "Comida", emoji: "" }, { name: "Supermercado", emoji: "" },
+  { name: "Transporte", emoji: "" }, { name: "Salidas", emoji: "" },
+  { name: "Servicios", emoji: "" }, { name: "Salud", emoji: "" },
+  { name: "Hogar", emoji: "" }, { name: "Ropa", emoji: "" },
+  { name: "Streaming", emoji: "" }, { name: "Sueldo", emoji: "" },
+  { name: "Ahorro", emoji: "" }, { name: "Otros", emoji: "" },
 ];
 
 const SOURCE_SUGGESTIONS = ["Sueldo", "Freelance", "Venta", "Reintegro", "Regalo", "Otro"];
@@ -33,11 +34,11 @@ export function NewTxSheet({ open, onClose, wallets, onCreated }: { open: boolea
     const w = walletId || wallets[0]?.id;
     const amt = parseAmount(amount);
 
-    if (!user) { toast.error("Sesión no válida"); return; }
-    if (!w) { toast.error("Elegí una billetera"); return; }
-    if (!isValidAmount(amt)) { toast.error("Ingresá un monto válido"); return; }
+    if (!user) { toast.error("Tu sesión expiró. Volvé a entrar."); return; }
+    if (!w) { toast.error("Elegí desde qué billetera."); return; }
+    if (!isValidAmount(amt)) { toast.error("Poné un monto válido."); return; }
     if (type === "ingreso" && !sourceName.trim()) {
-      toast.error("Indicá de dónde viene el ingreso");
+      toast.error("Contanos de dónde viene esta plata.");
       return;
     }
 
@@ -54,16 +55,16 @@ export function NewTxSheet({ open, onClose, wallets, onCreated }: { open: boolea
     });
     setBusy(false);
     if (error) {
-      toast.error("No se pudo registrar", { description: error.message });
+      toast.error("No pudimos guardar esto. Probá nuevamente.", { description: error.message });
       return;
     }
-    toast.success(type === "ingreso" ? "Ingreso registrado" : "Gasto agregado");
+    toast.success(type === "ingreso" ? "Listo, sumamos tu ingreso." : "Listo, anotamos tu gasto.");
     setAmount(""); setNotes(""); setSourceName("");
     onCreated(); onClose();
   };
 
   return (
-    <Sheet open={open} onClose={onClose} title="Nueva transacción">
+    <Sheet open={open} onClose={onClose} title="Registrar movimiento">
       <form onSubmit={submit} className="space-y-3">
         <div className="grid grid-cols-2 gap-2">
           {(["gasto", "ingreso"] as const).map((t) => (
@@ -109,22 +110,25 @@ export function NewTxSheet({ open, onClose, wallets, onCreated }: { open: boolea
         )}
 
         <div className="grid grid-cols-4 gap-2">
-          {CATEGORIES.map((c) => (
-            <button type="button" key={c.name} onClick={() => setCat(c)}
-              className={`tap rounded-xl p-2 text-center ${cat.name === c.name ? "bg-gold-soft ring-2 ring-primary" : "bg-muted"}`}>
-              <div className="text-xl">{c.emoji}</div>
-              <div className="text-[10px] mt-0.5 text-muted-foreground">{c.name}</div>
-            </button>
-          ))}
+          {CATEGORIES.map((c) => {
+            const active = cat.name === c.name;
+            return (
+              <button type="button" key={c.name} onClick={() => setCat(c)}
+                className={`tap rounded-xl p-2.5 flex flex-col items-center gap-1 ${active ? "bg-gold-soft ring-2 ring-primary" : "bg-muted"}`}>
+                <CategoryIcon name={c.name} size={22} tone={active ? "primary" : "muted"} />
+                <div className="text-[10px] text-muted-foreground">{c.name}</div>
+              </button>
+            );
+          })}
         </div>
 
-        <input value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Notas (opcional)"
+        <input value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Sumá una nota (opcional)"
           className="w-full h-12 rounded-xl bg-muted px-4 text-sm outline-none focus:ring-2 focus:ring-primary" />
 
         <button disabled={busy || !wallets.length} className="tap w-full h-12 rounded-xl bg-primary text-primary-foreground font-semibold flex items-center justify-center gap-2 disabled:opacity-60">
-          {busy && <Loader2 className="h-4 w-4 animate-spin" />} Registrar
+          {busy && <Loader2 className="h-4 w-4 animate-spin" />} Guardar movimiento
         </button>
-        {!wallets.length && <p className="text-xs text-center text-muted-foreground">Primero creá una billetera.</p>}
+        {!wallets.length && <p className="text-xs text-center text-muted-foreground">Antes creá una billetera para anotar acá.</p>}
       </form>
     </Sheet>
   );

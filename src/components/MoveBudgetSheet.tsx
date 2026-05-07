@@ -29,14 +29,14 @@ export function MoveBudgetSheet({ open, onClose, budgets, disponible, onDone }: 
     e.preventDefault();
     setErr(null);
     const amt = Number(amount.replace(/\./g, "").replace(",", "."));
-    if (!amt || amt <= 0) return setErr("Ingresá un monto válido");
-    if (from === to) return setErr("Elegí categorías distintas");
-    if (!toBudget) return setErr("Elegí una categoría destino");
+    if (!amt || amt <= 0) return setErr("Poné un monto válido.");
+    if (from === to) return setErr("Tienen que ser categorías distintas.");
+    if (!toBudget) return setErr("Elegí a qué categoría va la plata.");
 
     if (from === DISPONIBLE) {
-      if (amt > disponible) return setErr("No tenés tanto disponible");
+      if (amt > disponible) return setErr("No te alcanza con lo disponible.");
     } else {
-      if (!fromBudget || amt > fromBudget.assigned) return setErr("La categoría origen no tiene tanto asignado");
+      if (!fromBudget || amt > fromBudget.assigned) return setErr("Esa categoría no tiene tanto asignado.");
     }
 
     setBusy(true);
@@ -51,16 +51,16 @@ export function MoveBudgetSheet({ open, onClose, budgets, disponible, onDone }: 
   };
 
   return (
-    <Sheet open={open} onClose={onClose} title="Mover plata">
+    <Sheet open={open} onClose={onClose} title="Mover plata entre categorías">
       <form onSubmit={submit} className="space-y-4">
         <div className="grid grid-cols-[1fr_auto_1fr] gap-2 items-center">
           <select value={from} onChange={(e) => setFrom(e.target.value)} className="h-12 rounded-xl bg-muted px-3 text-sm outline-none">
-            <option value={DISPONIBLE}>💰 Disponible</option>
-            {budgets.map((b) => <option key={b.id} value={b.id}>{b.emoji} {b.name}</option>)}
+            <option value={DISPONIBLE}>Disponible</option>
+            {budgets.map((b) => <option key={b.id} value={b.id}>{b.name}</option>)}
           </select>
           <ArrowRight className="h-4 w-4 text-muted-foreground" />
           <select value={to} onChange={(e) => setTo(e.target.value)} className="h-12 rounded-xl bg-muted px-3 text-sm outline-none">
-            {budgets.map((b) => <option key={b.id} value={b.id}>{b.emoji} {b.name}</option>)}
+            {budgets.map((b) => <option key={b.id} value={b.id}>{b.name}</option>)}
           </select>
         </div>
 

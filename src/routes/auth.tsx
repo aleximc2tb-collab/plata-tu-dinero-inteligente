@@ -46,8 +46,8 @@ function Auth() {
       }
     } catch (err) {
       const msg = (err as Error).message;
-      if (msg.includes("Invalid login")) setError("Email o contraseña incorrectos");
-      else if (msg.includes("already registered")) setError("Ese email ya está registrado, iniciá sesión");
+      if (msg.includes("Invalid login")) setError("Email o contraseña no coinciden. Probá de nuevo.");
+      else if (msg.includes("already registered")) setError("Ese email ya tiene cuenta. Iniciá sesión.");
       else setError(msg);
     } finally {
       setBusy(false);
@@ -57,7 +57,7 @@ function Auth() {
   const google = async () => {
     setError(null);
     const r = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin + "/resumen" });
-    if (r.error) setError("No pudimos iniciar con Google");
+    if (r.error) setError("No pudimos entrar con Google. Intentá de nuevo.");
   };
 
   return (
@@ -68,7 +68,7 @@ function Auth() {
           Mango<span className="text-primary">X</span>
         </h1>
         <p className="text-sm text-muted-foreground mt-1">
-          {mode === "login" ? "Bienvenido de vuelta" : "Creá tu cuenta"}
+          {mode === "login" ? "Qué bueno verte de nuevo" : "Empezá a ordenar tu plata"}
         </p>
       </div>
 
@@ -109,7 +109,7 @@ function Auth() {
 
         <button disabled={busy} className="tap w-full h-14 rounded-2xl bg-primary text-primary-foreground font-semibold flex items-center justify-center gap-2 shadow-glow disabled:opacity-60">
           {busy && <Loader2 className="h-4 w-4 animate-spin" />}
-          {mode === "login" ? "Ingresar" : "Crear cuenta"}
+          {mode === "login" ? "Entrar" : "Crear mi cuenta"}
         </button>
       </form>
 
@@ -125,8 +125,8 @@ function Auth() {
         onClick={() => { setMode(mode === "login" ? "signup" : "login"); setError(null); }}
         className="mt-6 text-center text-sm text-muted-foreground tap"
       >
-        {mode === "login" ? "¿No tenés cuenta? " : "¿Ya tenés cuenta? "}
-        <span className="text-primary font-semibold">{mode === "login" ? "Registrate" : "Ingresá"}</span>
+        {mode === "login" ? "¿Todavía no tenés cuenta? " : "¿Ya tenés cuenta? "}
+        <span className="text-primary font-semibold">{mode === "login" ? "Crear cuenta" : "Entrar"}</span>
       </button>
     </div>
   );

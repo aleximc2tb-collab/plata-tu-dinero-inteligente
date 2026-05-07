@@ -7,11 +7,7 @@ import { parseAmount, isValidAmount } from "@/utils/money";
 import { Link2, Camera, Loader2, ArrowLeft, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 
-const CATEGORY_EMOJI: Record<string, string> = {
-  Comida: "🍔", Supermercado: "🛒", Transporte: "🚗", Salidas: "🍻",
-  Servicios: "🧾", Salud: "💊", Hogar: "🏠", Ropa: "👕",
-  Streaming: "📺", Otros: "✨",
-};
+const CATEGORIES = ["Comida", "Supermercado", "Transporte", "Salidas", "Servicios", "Salud", "Hogar", "Ropa", "Streaming", "Otros"];
 
 type ParsedTicket = {
   amount: number;
@@ -78,13 +74,12 @@ export function ScanTicketSheet({ open, onClose, wallets, onCreated }: Props) {
   const saveTx = async (e: React.FormEvent) => {
     e.preventDefault();
     const amt = parseAmount(amount);
-    if (!user) { toast.error("Sesión no válida"); return; }
-    if (!walletId) { toast.error("Elegí una billetera"); return; }
-    if (!isValidAmount(amt)) { toast.error("Monto inválido"); return; }
-    if (!date) { toast.error("Fecha requerida"); return; }
+    if (!user) { toast.error("Tu sesión expiró. Volvé a entrar."); return; }
+    if (!walletId) { toast.error("Elegí desde qué billetera."); return; }
+    if (!isValidAmount(amt)) { toast.error("Poné un monto válido."); return; }
+    if (!date) { toast.error("Falta la fecha del ticket."); return; }
 
     setBusy(true);
-    const emoji = CATEGORY_EMOJI[category] ?? "🧾";
     const cleanMerchant = (merchant || "").trim() || null;
     const occurredAt = new Date(date + "T12:00:00").toISOString();
 
@@ -104,7 +99,7 @@ export function ScanTicketSheet({ open, onClose, wallets, onCreated }: Props) {
         .limit(1);
       if (dupes && dupes.length > 0) {
         setBusy(false);
-        toast.error("Ticket duplicado", { description: "Ya registraste este gasto." });
+        toast.error("Este ticket ya estaba cargado.", { description: "No lo sumamos de nuevo." });
         return;
       }
     }
@@ -115,22 +110,22 @@ export function ScanTicketSheet({ open, onClose, wallets, onCreated }: Props) {
       type: "gasto",
       amount: amt,
       category,
-      category_emoji: emoji,
-      notes: cleanMerchant ? `🧾 ${cleanMerchant}` : null,
+      category_emoji: "",
+      notes: cleanMerchant,
       merchant: cleanMerchant,
       occurred_at: occurredAt,
     });
     setBusy(false);
     if (error) {
       if (error.code === "23505") {
-        toast.error("Ticket duplicado", { description: "Ya estaba registrado." });
+        toast.error("Este ticket ya estaba cargado.", { description: "No lo sumamos de nuevo." });
       } else {
-        toast.error("No se pudo guardar", { description: error.message });
+        toast.error("No pudimos guardar esto. Probá nuevamente.", { description: error.message });
         setError(error.message);
       }
       return;
     }
-    toast.success("Gasto agregado", { description: cleanMerchant ?? undefined });
+    toast.success("Listo, anotamos tu gasto.", { description: cleanMerchant ?? undefined });
     onCreated();
     handleClose();
   };
@@ -139,7 +134,7 @@ export function ScanTicketSheet({ open, onClose, wallets, onCreated }: Props) {
     <Sheet open={open} onClose={handleClose} title={titleFor(step)}>
       {step === "menu" && (
         <div className="space-y-3">
-          <p className="text-xs text-muted-foreground">Cargá un gasto en segundos.</p>
+          <p className="text-xs text-muted-foreground">Cargá un gasto sin escribir nada.</p>
           <button
             onClick={() => setStep("link")}
             className="tap w-full flex items-center gap-3 p-4 rounded-2xl glass border border-primary/20 hover:border-primary/50 transition-colors"
@@ -148,8 +143,8 @@ export function ScanTicketSheet({ open, onClose, wallets, onCreated }: Props) {
               <Link2 className="h-5 w-5 text-primary" />
             </div>
             <div className="flex-1 text-left">
-              <p className="text-sm font-semibold">Pegar link de ticket</p>
-              <p className="text-xs text-muted-foreground">AFIP, comercios, e-commerce</p>
+              <p className="text-sm font-semibold">Pegá el link de un ticket</p>
+              <p className="text-xs text-muted-foreground">AFIP, comercios, compras online</p>
             </div>
           </button>
 
@@ -161,15 +156,15 @@ export function ScanTicketSheet({ open, onClose, wallets, onCreated }: Props) {
               <Camera className="h-5 w-5 text-muted-foreground" />
             </div>
             <div className="flex-1 text-left">
-              <p className="text-sm font-semibold">Escanear ticket</p>
-              <p className="text-xs text-muted-foreground">Próximamente 📷</p>
+              <p className="text-sm font-semibold">Sacale una foto</p>
+              <p className="text-xs text-muted-foreground">Disponible en breve</p>
             </div>
           </button>
 
           <div className="mt-4 flex items-start gap-2 p-3 rounded-xl bg-gold-soft/50">
             <Sparkles className="h-4 w-4 text-primary shrink-0 mt-0.5" />
             <p className="text-xs leading-relaxed">
-              Detectamos monto, comercio y categoría automáticamente con IA.
+              Detectamos monto, comercio y categoría por vos.
             </p>
           </div>
         </div>
@@ -194,7 +189,7 @@ export function ScanTicketSheet({ open, onClose, wallets, onCreated }: Props) {
             onClick={processLink}
             className="tap w-full h-12 rounded-xl bg-primary text-primary-foreground font-semibold flex items-center justify-center gap-2 disabled:opacity-60"
           >
-            {busy ? <><Loader2 className="h-4 w-4 animate-spin" /> Procesando…</> : "Procesar"}
+            {busy ? <><Loader2 className="h-4 w-4 animate-spin" /> Leyendo el ticket…</> : "Leer ticket"}
           </button>
           <p className="text-[11px] text-muted-foreground text-center">
             Pegá el link del ticket fiscal o de tu compra online.
@@ -210,9 +205,9 @@ export function ScanTicketSheet({ open, onClose, wallets, onCreated }: Props) {
           <div className="mx-auto h-24 w-24 rounded-3xl glass-gold grid place-items-center">
             <Camera className="h-10 w-10 text-primary" />
           </div>
-          <p className="text-sm font-semibold">Próximamente vas a poder escanear tickets directamente 📷</p>
+          <p className="text-sm font-semibold">Pronto vas a poder sacarle una foto al ticket.</p>
           <p className="text-xs text-muted-foreground">
-            Mientras tanto, usá la opción de pegar link.
+            Mientras tanto, pegá el link de tu compra.
           </p>
           <button onClick={() => setStep("link")} className="tap w-full h-11 rounded-xl bg-muted text-sm font-medium">
             Pegar link en su lugar
@@ -223,9 +218,9 @@ export function ScanTicketSheet({ open, onClose, wallets, onCreated }: Props) {
       {step === "confirm" && parsed && (
         <form onSubmit={saveTx} className="space-y-3">
           <div className="p-4 rounded-2xl glass-gold">
-            <p className="text-xs text-muted-foreground">Detectamos un gasto</p>
+            <p className="text-xs text-muted-foreground">Encontramos un gasto</p>
             <p className="text-sm font-semibold mt-1">
-              en <span className="text-primary">{parsed.merchant}</span> 🧾
+              en <span className="text-primary">{parsed.merchant}</span>
             </p>
           </div>
 
@@ -256,8 +251,8 @@ export function ScanTicketSheet({ open, onClose, wallets, onCreated }: Props) {
                 onChange={(e) => setCategory(e.target.value)}
                 className="mt-1 w-full h-11 rounded-xl bg-muted px-3 text-sm outline-none"
               >
-                {Object.keys(CATEGORY_EMOJI).map((c) => (
-                  <option key={c} value={c}>{CATEGORY_EMOJI[c]} {c}</option>
+                {CATEGORIES.map((c) => (
+                  <option key={c} value={c}>{c}</option>
                 ))}
               </select>
             </label>
@@ -289,7 +284,7 @@ export function ScanTicketSheet({ open, onClose, wallets, onCreated }: Props) {
             disabled={busy || !walletId || !amount}
             className="tap w-full h-12 rounded-xl bg-primary text-primary-foreground font-semibold flex items-center justify-center gap-2 disabled:opacity-60"
           >
-            {busy && <Loader2 className="h-4 w-4 animate-spin" />} Agregar gasto
+            {busy && <Loader2 className="h-4 w-4 animate-spin" />} Guardar gasto
           </button>
         </form>
       )}
@@ -299,9 +294,9 @@ export function ScanTicketSheet({ open, onClose, wallets, onCreated }: Props) {
 
 function titleFor(step: Step): string {
   switch (step) {
-    case "menu": return "Cargar gasto rápido";
-    case "link": return "Pegar link de ticket";
-    case "scan": return "Escanear ticket";
-    case "confirm": return "Confirmar gasto";
+    case "menu": return "Cargar un gasto";
+    case "link": return "Pegá el link";
+    case "scan": return "Sacar foto del ticket";
+    case "confirm": return "Revisá y guardá";
   }
 }
