@@ -4,6 +4,7 @@ import { Sheet } from "./Sheet";
 import type { Budget } from "@/hooks/useFinance";
 import { Money } from "./Money";
 import { ArrowRight, Loader2 } from "lucide-react";
+import { MoneyInput, moneyInputToNumber } from "./MoneyInput";
 
 interface Props {
   open: boolean;
@@ -28,7 +29,7 @@ export function MoveBudgetSheet({ open, onClose, budgets, disponible, onDone }: 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErr(null);
-    const amt = Number(amount.replace(/\./g, "").replace(",", "."));
+    const amt = moneyInputToNumber(amount) ?? 0;
     if (!amt || amt <= 0) return setErr("Poné un monto válido.");
     if (from === to) return setErr("Tienen que ser categorías distintas.");
     if (!toBudget) return setErr("Elegí a qué categoría va la plata.");
@@ -70,7 +71,7 @@ export function MoveBudgetSheet({ open, onClose, budgets, disponible, onDone }: 
             : fromBudget && <>Asignado: <Money value={fromBudget.assigned} className="text-primary" /></>}
         </div>
 
-        <input autoFocus value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="Monto a mover" inputMode="decimal"
+        <MoneyInput autoFocus value={amount} onChange={setAmount} placeholder="Monto a mover"
           className="w-full h-14 rounded-xl bg-muted px-4 text-lg font-bold text-center outline-none focus:ring-2 focus:ring-primary num" />
 
         {err && <p className="text-xs text-danger text-center">{err}</p>}

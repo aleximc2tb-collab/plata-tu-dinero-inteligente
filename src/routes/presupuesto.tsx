@@ -8,9 +8,23 @@ import { useFinance } from "@/hooks/useFinance";
 import { NewBudgetSheet } from "@/components/NewBudgetSheet";
 import { MoveBudgetSheet } from "@/components/MoveBudgetSheet";
 import { CategoryIcon } from "@/components/CategoryIcon";
-import { Trash2, ArrowLeftRight, PieChart } from "lucide-react";
+import { Trash2, ArrowLeftRight, PieChart, Check, Clock, Wallet as WalletIcon, Landmark, CreditCard, Banknote } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { HelpHint } from "@/components/HelpHint";
+import type { PaymentMethod } from "@/hooks/useFinance";
+
+const METHOD_ICONS: Record<PaymentMethod, typeof WalletIcon> = {
+  efectivo: Banknote,
+  banco: Landmark,
+  mercadopago: WalletIcon,
+  tarjeta: CreditCard,
+};
+const METHOD_LABELS: Record<PaymentMethod, string> = {
+  efectivo: "Efectivo",
+  banco: "Banco",
+  mercadopago: "Mercado Pago",
+  tarjeta: "Tarjeta",
+};
 
 export const Route = createFileRoute("/presupuesto")({
   head: () => ({ meta: [{ title: "Presupuesto — MangoX" }, { name: "description", content: "Asigná cada peso a una categoría antes de gastarlo." }] }),
@@ -33,6 +47,24 @@ function Presupuesto() {
 
   const remove = async (id: string) => {
     await supabase.from("budget_categories").delete().eq("id", id);
+    refresh();
+  };
+
+  const togglePaid = async (id: string, current: "pendiente" | "pagado") => {
+    const next = current === "pagado" ? "pendiente" : "pagado";
+    await supabase.from("budget_categories")
+      .update({
+        status: next,
+        paid_at: next === "pagado" ? new Date().toISOString() : null,
+      })
+      .eq("id", id);
+    refresh();
+  };
+
+  const setMethod = async (id: string, method: PaymentMethod) => {
+    await supabase.from("budget_categories")
+      .update({ payment_method: method, status: "pagado", paid_at: new Date().toISOString() })
+      .eq("id", id);
     refresh();
   };
 
@@ -106,6 +138,46 @@ function Presupuesto() {
                     <div className={`h-full ${barColor} transition-all duration-500`} style={{ width: `${over ? 100 : pct}%` }} />
                   </div>
                   {over && <p className="mt-2 text-xs text-danger">Te pasaste. Podés mover plata desde otra categoría.</p>}
+
+                  <div className="mt-3 flex items-center justify-between gap-2 flex-wrap">
+                    <button
+                      type="button"
+                      onClick={() => togglePaid(b.id, b.status)}
+                      className={`tap inline-flex items-center gap-1.5 h-8 px-3 rounded-full text-xs font-semibold ${
+                        b.status === "pagado"
+                          ? "bg-accent/15 text-accent"
+                          : "bg-muted text-muted-foreground"
+                      }`}
+                    >
+                      {b.status === "pagado" ? <Check className="h-3.5 w-3.5" /> : <Clock className="h-3.5 w-3.5" />}
+                      {b.status === "pagado" ? "Pagado" : "Pendiente"}
+                    </button>
+
+                    <div className="flex items-center gap-1">
+                      {(["efectivo", "banco", "mercadopago", "tarjeta"] as PaymentMethod[]).map((m) => {
+                        const Icon = METHOD_ICONS[m];
+                        const active = b.payment_method === m;
+                        return (
+                          <button
+                            key={m}
+                            type="button"
+                            title={METHOD_LABELS[m]}
+                            onClick={() => setMethod(b.id, m)}
+                            className={`tap h-8 w-8 rounded-full grid place-items-center ${
+                              active ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
+                            }`}
+                          >
+                            <Icon className="h-4 w-4" strokeWidth={1.8} />
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                  {b.status === "pagado" && (
+                    <p className="mt-2 text-[11px] text-muted-foreground">
+                      Marcado como pagado{b.payment_method ? ` con ${METHOD_LABELS[b.payment_method]}` : ""}. Esto es solo informativo.
+                    </p>
+                  )}
                 </div>
               );
             })}

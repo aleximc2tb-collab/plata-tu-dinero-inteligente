@@ -7,6 +7,7 @@ import { parseAmount, isValidAmount } from "@/utils/money";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { CategoryIcon } from "./CategoryIcon";
+import { MoneyInput } from "./MoneyInput";
 
 const CATEGORIES = [
   { name: "Comida", emoji: "" }, { name: "Supermercado", emoji: "" },
@@ -75,7 +76,7 @@ export function NewTxSheet({ open, onClose, wallets, onCreated }: { open: boolea
           ))}
         </div>
 
-        <input autoFocus value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="$0,00" inputMode="decimal"
+        <MoneyInput autoFocus value={amount} onChange={setAmount} placeholder="$0"
           className="w-full h-16 rounded-xl bg-muted px-4 text-2xl font-bold text-center outline-none focus:ring-2 focus:ring-primary num" />
 
         <select value={walletId} onChange={(e) => setWalletId(e.target.value)}

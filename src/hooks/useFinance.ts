@@ -29,12 +29,18 @@ export interface Tx {
   merchant?: string | null;
 }
 
+export type BudgetStatus = "pendiente" | "pagado";
+export type PaymentMethod = "efectivo" | "banco" | "mercadopago" | "tarjeta";
+
 export interface Budget {
   id: string;
   name: string;
   emoji: string;
   assigned: number;
   period: "semanal" | "quincenal" | "mensual";
+  status: BudgetStatus;
+  payment_method: PaymentMethod | null;
+  paid_at: string | null;
   spent?: number;
 }
 
