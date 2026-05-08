@@ -4,6 +4,7 @@ import { Sheet } from "./Sheet";
 import { useAuth } from "@/hooks/useAuth";
 import { Loader2 } from "lucide-react";
 import { CategoryIcon } from "./CategoryIcon";
+import { MoneyInput, moneyInputToNumber } from "./MoneyInput";
 
 const PRESETS = [
   { emoji: "", name: "Comida" }, { emoji: "", name: "Supermercado" },
@@ -22,7 +23,7 @@ export function NewBudgetSheet({ open, onClose, onCreated }: { open: boolean; on
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const amt = Number(assigned.replace(/\./g, "").replace(",", "."));
+    const amt = moneyInputToNumber(assigned) ?? 0;
     if (!user || !amt) return;
     setBusy(true);
     const { error } = await supabase.from("budget_categories").insert({
@@ -56,8 +57,9 @@ export function NewBudgetSheet({ open, onClose, onCreated }: { open: boolean; on
         </div>
         <input value={name} onChange={(e) => setName(e.target.value)} placeholder={`Nombre (ej: ${preset.name})`}
           className="w-full h-12 rounded-xl bg-muted px-4 text-sm outline-none focus:ring-2 focus:ring-primary" />
-        <input autoFocus value={assigned} onChange={(e) => setAssigned(e.target.value)} placeholder="¿Cuánto querés asignar?" inputMode="decimal"
+        <MoneyInput autoFocus value={assigned} onChange={setAssigned} placeholder="¿Cuánto querés asignar?"
           className="w-full h-14 rounded-xl bg-muted px-4 text-lg font-bold text-center outline-none focus:ring-2 focus:ring-primary num" />
+        <p className="text-[11px] text-muted-foreground text-center -mt-1">Asigná plata antes de gastar. Cada peso con su destino.</p>
         <div className="flex gap-2">
           {(["semanal", "quincenal", "mensual"] as const).map((p) => (
             <button type="button" key={p} onClick={() => setPeriod(p)}

@@ -6,6 +6,7 @@ import type { Wallet } from "@/hooks/useFinance";
 import type { Frequency } from "@/hooks/useRecurring";
 import { Loader2 } from "lucide-react";
 import { CategoryIcon } from "./CategoryIcon";
+import { MoneyInput, moneyInputToNumber } from "./MoneyInput";
 
 const CATEGORIES = [
   { name: "Sueldo", emoji: "" }, { name: "Alquiler", emoji: "" },
@@ -31,7 +32,7 @@ export function NewRecurringSheet({ open, onClose, wallets, onCreated }: Props) 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     const w = walletId || wallets[0]?.id;
-    const amt = Number(amount.replace(/\./g, "").replace(",", "."));
+    const amt = moneyInputToNumber(amount) ?? 0;
     if (!user || !w || !amt || !nextRun) return;
     setBusy(true);
     const total = installments ? Number(installments) : null;
@@ -60,7 +61,7 @@ export function NewRecurringSheet({ open, onClose, wallets, onCreated }: Props) 
           ))}
         </div>
 
-        <input autoFocus value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="$0,00" inputMode="decimal"
+        <MoneyInput autoFocus value={amount} onChange={setAmount} placeholder="$0"
           className="w-full h-16 rounded-xl bg-muted px-4 text-2xl font-bold text-center outline-none focus:ring-2 focus:ring-primary num" />
 
         <select value={walletId} onChange={(e) => setWalletId(e.target.value)}

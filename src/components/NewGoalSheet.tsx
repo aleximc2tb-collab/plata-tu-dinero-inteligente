@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { Loader2, Target } from "lucide-react";
 import { CategoryIcon } from "./CategoryIcon";
+import { MoneyInput, moneyInputToNumber } from "./MoneyInput";
 
 interface Props { open: boolean; onClose: () => void; onCreated: () => void; }
 
@@ -16,7 +17,7 @@ export function NewGoalSheet({ open, onClose, onCreated }: Props) {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const amt = Number(target.replace(/\./g, "").replace(",", "."));
+    const amt = moneyInputToNumber(target) ?? 0;
     if (!user || !name || !amt) return;
     setBusy(true);
     const { error } = await supabase.from("savings_goals").insert({
@@ -41,7 +42,7 @@ export function NewGoalSheet({ open, onClose, onCreated }: Props) {
             className="flex-1 h-11 rounded-xl bg-card px-4 text-sm outline-none focus:ring-2 focus:ring-primary" />
         </div>
 
-        <input value={target} onChange={(e) => setTarget(e.target.value)} placeholder="¿Cuánto querés juntar?" inputMode="decimal"
+        <MoneyInput value={target} onChange={setTarget} placeholder="¿Cuánto querés juntar?"
           className="w-full h-16 rounded-xl bg-muted px-4 text-2xl font-bold text-center outline-none focus:ring-2 focus:ring-primary num" />
 
         <div>
