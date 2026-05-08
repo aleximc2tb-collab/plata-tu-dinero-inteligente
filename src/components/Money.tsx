@@ -6,9 +6,25 @@ interface Props {
   className?: string;
   centsClassName?: string;
   animate?: boolean;
+  /** Oculta los centavos cuando son ,00 (limpio para totales redondos). */
+  hideZeroCents?: boolean;
 }
 
-export function Money({ value, className = "", centsClassName = "", animate = false }: Props) {
+/**
+ * Visualización premium de plata (read-only).
+ * - Parte entera grande y destacada.
+ * - Centavos en superíndice, más chicos y suaves.
+ * - Tabular nums para alineación tipográfica.
+ *
+ * NO usar dentro de inputs editables: ahí va MoneyInput.
+ */
+export function Money({
+  value,
+  className = "",
+  centsClassName = "",
+  animate = false,
+  hideZeroCents = false,
+}: Props) {
   const [v, setV] = useState(animate ? 0 : value);
 
   useEffect(() => {
@@ -28,11 +44,23 @@ export function Money({ value, className = "", centsClassName = "", animate = fa
   }, [value, animate]);
 
   const { whole, cents, negative } = splitARS(v);
+  const showCents = !(hideZeroCents && cents === "00");
+
   return (
-    <span className={`num ${className}`}>
-      {negative && "−"}
+    <span
+      className={`num inline-baseline tabular-nums tracking-tight ${className}`}
+      style={{ fontVariantNumeric: "tabular-nums" }}
+    >
+      {negative && <span className="opacity-80">−</span>}
       {whole}
-      <span className={`text-[0.55em] align-top ml-0.5 opacity-70 ${centsClassName}`}>,{cents}</span>
+      {showCents && (
+        <span
+          className={`ml-[0.08em] align-super text-[0.55em] font-medium opacity-60 tracking-normal ${centsClassName}`}
+          style={{ fontFeatureSettings: '"tnum"' }}
+        >
+          ,{cents}
+        </span>
+      )}
     </span>
   );
 }
