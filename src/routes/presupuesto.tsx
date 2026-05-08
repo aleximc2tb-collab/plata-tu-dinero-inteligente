@@ -8,9 +8,23 @@ import { useFinance } from "@/hooks/useFinance";
 import { NewBudgetSheet } from "@/components/NewBudgetSheet";
 import { MoveBudgetSheet } from "@/components/MoveBudgetSheet";
 import { CategoryIcon } from "@/components/CategoryIcon";
-import { Trash2, ArrowLeftRight, PieChart } from "lucide-react";
+import { Trash2, ArrowLeftRight, PieChart, Check, Clock, Wallet as WalletIcon, Landmark, CreditCard, Banknote } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { HelpHint } from "@/components/HelpHint";
+import type { PaymentMethod } from "@/hooks/useFinance";
+
+const METHOD_ICONS: Record<PaymentMethod, typeof WalletIcon> = {
+  efectivo: Banknote,
+  banco: Landmark,
+  mercadopago: WalletIcon,
+  tarjeta: CreditCard,
+};
+const METHOD_LABELS: Record<PaymentMethod, string> = {
+  efectivo: "Efectivo",
+  banco: "Banco",
+  mercadopago: "Mercado Pago",
+  tarjeta: "Tarjeta",
+};
 
 export const Route = createFileRoute("/presupuesto")({
   head: () => ({ meta: [{ title: "Presupuesto — MangoX" }, { name: "description", content: "Asigná cada peso a una categoría antes de gastarlo." }] }),
@@ -33,6 +47,24 @@ function Presupuesto() {
 
   const remove = async (id: string) => {
     await supabase.from("budget_categories").delete().eq("id", id);
+    refresh();
+  };
+
+  const togglePaid = async (id: string, current: "pendiente" | "pagado") => {
+    const next = current === "pagado" ? "pendiente" : "pagado";
+    await supabase.from("budget_categories")
+      .update({
+        status: next,
+        paid_at: next === "pagado" ? new Date().toISOString() : null,
+      })
+      .eq("id", id);
+    refresh();
+  };
+
+  const setMethod = async (id: string, method: PaymentMethod) => {
+    await supabase.from("budget_categories")
+      .update({ payment_method: method, status: "pagado", paid_at: new Date().toISOString() })
+      .eq("id", id);
     refresh();
   };
 
