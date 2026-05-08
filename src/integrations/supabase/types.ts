@@ -21,7 +21,10 @@ export type Database = {
           emoji: string
           id: string
           name: string
+          paid_at: string | null
+          payment_method: Database["public"]["Enums"]["payment_method"] | null
           period: Database["public"]["Enums"]["budget_period"]
+          status: Database["public"]["Enums"]["budget_status"]
           updated_at: string
           user_id: string
         }
@@ -31,7 +34,10 @@ export type Database = {
           emoji?: string
           id?: string
           name: string
+          paid_at?: string | null
+          payment_method?: Database["public"]["Enums"]["payment_method"] | null
           period?: Database["public"]["Enums"]["budget_period"]
+          status?: Database["public"]["Enums"]["budget_status"]
           updated_at?: string
           user_id: string
         }
@@ -41,7 +47,10 @@ export type Database = {
           emoji?: string
           id?: string
           name?: string
+          paid_at?: string | null
+          payment_method?: Database["public"]["Enums"]["payment_method"] | null
           period?: Database["public"]["Enums"]["budget_period"]
+          status?: Database["public"]["Enums"]["budget_status"]
           updated_at?: string
           user_id?: string
         }
@@ -271,6 +280,8 @@ export type Database = {
     }
     Enums: {
       budget_period: "semanal" | "quincenal" | "mensual"
+      budget_status: "pendiente" | "pagado"
+      payment_method: "efectivo" | "banco" | "mercadopago" | "tarjeta"
       recurrence_frequency: "diaria" | "semanal" | "quincenal" | "mensual"
       tx_type: "ingreso" | "gasto"
       wallet_type:
@@ -408,6 +419,8 @@ export const Constants = {
   public: {
     Enums: {
       budget_period: ["semanal", "quincenal", "mensual"],
+      budget_status: ["pendiente", "pagado"],
+      payment_method: ["efectivo", "banco", "mercadopago", "tarjeta"],
       recurrence_frequency: ["diaria", "semanal", "quincenal", "mensual"],
       tx_type: ["ingreso", "gasto"],
       wallet_type: [
