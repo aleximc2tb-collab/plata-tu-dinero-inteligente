@@ -47,6 +47,9 @@ function Billeteras() {
           </p>
           <Money value={total} animate className="block mt-1 text-3xl font-bold" />
         </div>
+        <p className="mt-2 px-1 text-[11px] text-muted-foreground">
+          Las billeteras representan <span className="text-foreground font-medium">dónde está tu plata</span>, no de dónde vino.
+        </p>
 
         {wallets.length === 0 ? (
           <EmptyState
